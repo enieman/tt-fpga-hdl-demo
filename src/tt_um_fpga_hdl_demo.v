@@ -23,7 +23,7 @@ module top(input logic clk, input logic reset, input logic [31:0] cyc_cnt, outpu
    logic rst_n = ! reset;
 
    // Instantiate the Tiny Tapeout module.
-   tt_um_fpga_hdl_template tt(.*);
+   tt_um_fpga_hdl_demo tt(.*);
 
    // Passed/failed to control Makerchip simulation, passed from Tiny Tapeout module's uo_out pins.
    assign passed = uo_out[0];
@@ -41,7 +41,7 @@ endmodule
 // The Tiny Tapeout module
 // =======================
 
-module tt_um_fpga_hdl_template (
+module tt_um_fpga_hdl_demo (
     input  wire [7:0] ui_in,    // Dedicated inputs - connected to the input switches
     output wire [7:0] uo_out,   // Dedicated outputs - connected to the 7 segment display
        // The FPGA is based on TinyTapeout 3 which has no bidirectional I/Os (vs. TT6 for the ASIC).
