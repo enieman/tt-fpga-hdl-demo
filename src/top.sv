@@ -156,7 +156,7 @@ module my_design (
    dummy_shifter (
       .clk(clk),
       .rst(reset),
-      .serial_in(uo_out[7]),
+      .serial_in(uo_out[0]),
       .shift_enable(count_en),
       .parallel_in(8'h00),
       .load_enable(1'b0),
