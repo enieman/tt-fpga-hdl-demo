@@ -138,7 +138,9 @@ module my_design (
    logic [7:0] data_out_latched;
    logic request_ff;
 
-   assign uo_out = data_out_latched;
+   //assign uo_out = data_out_latched;
+   assign uo_out[7] = ui_in[7];
+   assign uo_out[6:0] = data_out_latched[6:0];
    assign request = ui_in[7] & ~request_ff;
 
    always_ff @(posedge clk) request_ff <= ui_in[7];
