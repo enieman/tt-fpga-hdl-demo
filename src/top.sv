@@ -132,8 +132,7 @@ module my_design (
    wire reset = ! rst_n;
 
    // UART Feedback
-   localparam CLK_FREQ = 20E6;
-   localparam BAUD_RATE = 9600;
+   localparam int unsigned CYCLES_PER_BIT = 2083; // 20MHz clock, 9600 bit/sec
 
    wire uart_link, data_ready;
    wire [7:0] data_out;
@@ -147,8 +146,7 @@ module my_design (
    end
 
    uart_tx #(
-      .CLK_FREQ(CLK_FREQ),
-      .BAUD_RATE(BAUD_RATE))
+      .CYCLES_PER_BIT(CYCLES_PER_BIT))
    uart_tx0 (
       .clk(clk),
       .rst(reset),
@@ -159,8 +157,7 @@ module my_design (
       .error());
 
    uart_rx #(
-      .CLK_FREQ(CLK_FREQ),
-      .BAUD_RATE(BAUD_RATE))
+      .CYCLES_PER_BIT(CYCLES_PER_BIT))
    uart_rx0 (
       .clk(clk),
       .rst(reset),
@@ -245,7 +242,7 @@ logic [6:0] L0_sseg_segment_n_a0;
 //_\TLV
    /* verilator lint_off UNOPTFLAT */
    // Connect Tiny Tapeout I/Os to Virtual FPGA Lab.
-   //_\source /raw.githubusercontent.com/osfpga/VirtualFPGALab/35e36bd144fddd75495d4cbc01c4fc50ac5bde6f/tlvlib/tinytapeoutlib.tlv 76   // Instantiated from top.tlv, 175 as: m5+tt_connections()
+   //_\source /raw.githubusercontent.com/osfpga/VirtualFPGALab/35e36bd144fddd75495d4cbc01c4fc50ac5bde6f/tlvlib/tinytapeoutlib.tlv 76   // Instantiated from top.tlv, 172 as: m5+tt_connections()
       assign L0_slideswitch_a0[7:0] = ui_in;
       assign L0_sseg_segment_n_a0[6:0] = ~ uo_out[6:0];
       assign L0_sseg_decimal_point_n_a0 = ~ uo_out[7];
@@ -253,7 +250,7 @@ logic [6:0] L0_sseg_segment_n_a0;
    //_\end_source
 
    // Instantiate the Virtual FPGA Lab.
-   //_\source /raw.githubusercontent.com/osfpga/VirtualFPGALab/a069f1e4e19adc829b53237b3e0b5d6763dc3194/tlvlib/fpgaincludes.tlv 307   // Instantiated from top.tlv, 178 as: m5+board(/top, /fpga, 7, $, , my_design)
+   //_\source /raw.githubusercontent.com/osfpga/VirtualFPGALab/a069f1e4e19adc829b53237b3e0b5d6763dc3194/tlvlib/fpgaincludes.tlv 307   // Instantiated from top.tlv, 175 as: m5+board(/top, /fpga, 7, $, , my_design)
       
       //_\source /raw.githubusercontent.com/osfpga/VirtualFPGALab/a069f1e4e19adc829b53237b3e0b5d6763dc3194/tlvlib/fpgaincludes.tlv 355   // Instantiated from /raw.githubusercontent.com/osfpga/VirtualFPGALab/a069f1e4e19adc829b53237b3e0b5d6763dc3194/tlvlib/fpgaincludes.tlv, 309 as: m4+thanks(m5__l(309)m5_eval(m5_get(BOARD_THANKS_ARGS)))
          //_/thanks
@@ -323,7 +320,7 @@ logic [6:0] L0_sseg_segment_n_a0;
       
    //_\end_source
    // Label the switch inputs [0..7] (1..8 on the physical switch panel) (top-to-bottom).
-   //_\source /raw.githubusercontent.com/osfpga/VirtualFPGALab/35e36bd144fddd75495d4cbc01c4fc50ac5bde6f/tlvlib/tinytapeoutlib.tlv 82   // Instantiated from top.tlv, 180 as: m5+tt_input_labels_viz(⌈"UNUSED", "UNUSED", "UNUSED", "UNUSED", "UNUSED", "UNUSED", "UNUSED", "UNUSED"⌉)
+   //_\source /raw.githubusercontent.com/osfpga/VirtualFPGALab/35e36bd144fddd75495d4cbc01c4fc50ac5bde6f/tlvlib/tinytapeoutlib.tlv 82   // Instantiated from top.tlv, 177 as: m5+tt_input_labels_viz(⌈"UNUSED", "UNUSED", "UNUSED", "UNUSED", "UNUSED", "UNUSED", "UNUSED", "UNUSED"⌉)
       for (input_label = 0; input_label <= 7; input_label++) begin : L1_InputLabel //_/input_label
          
       end
@@ -411,8 +408,7 @@ endmodule
    // UART Timer
    module uart_timer
       #(
-         parameter real CLK_FREQ = 100E6,
-         parameter real BAUD_RATE = 9600 // Bits per second
+         parameter int unsigned CYCLES_PER_BIT = 2083 // 20MHz clock, 9600 bit/sec
       )
       (
          input clk,
@@ -421,8 +417,8 @@ endmodule
          output logic full_bit
       );
 
-      localparam int COUNTER_WIDTH = $clog2(HALF_BIT_CLOCKS);
-      localparam int HALF_BIT_CLOCKS = int'(CLK_FREQ/BAUD_RATE/2);
+      localparam int unsigned HALF_BIT_CLOCKS = CYCLES_PER_BIT / 2;
+      localparam int unsigned COUNTER_WIDTH = $clog2(HALF_BIT_CLOCKS);
 
       logic [COUNTER_WIDTH-1:0] count;
       logic count_complete, toggle;
@@ -456,8 +452,7 @@ endmodule
    // UART RX Module
    module uart_rx
       #(
-         parameter real CLK_FREQ = 100E6,
-         parameter real BAUD_RATE = 9600 // Bits per second
+         parameter int unsigned CYCLES_PER_BIT = 2083 // 20MHz clock, 9600 bit/sec
       )
       (
          input clk,
@@ -508,8 +503,7 @@ endmodule
       // Connect timer
       assign timer_rst = ((state == STATE_IDLE) || (state == STATE_STOP && start_detected) || rst) ? 1'b1:1'b0;
       uart_timer #(
-         .CLK_FREQ(CLK_FREQ),
-         .BAUD_RATE(BAUD_RATE))
+         .CYCLES_PER_BIT(CYCLES_PER_BIT))
       timer(
          .clk(clk),
          .rst(timer_rst),
@@ -545,8 +539,7 @@ endmodule
    // UART TX Module
    module uart_tx
       #(
-         parameter real CLK_FREQ = 100E6,
-         parameter real BAUD_RATE = 9600 // Bits per second
+         parameter int unsigned CYCLES_PER_BIT = 2083 // 20MHz clock, 9600 bit/sec
       )
       (
          input clk,
@@ -592,8 +585,7 @@ endmodule
 
       // Connect timer
       uart_timer #(
-         .CLK_FREQ(CLK_FREQ),
-         .BAUD_RATE(BAUD_RATE))
+         .CYCLES_PER_BIT(CYCLES_PER_BIT))
       timer(
          .clk(clk),
          .rst(idle_state | rst),
