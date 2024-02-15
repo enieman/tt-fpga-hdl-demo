@@ -130,15 +130,17 @@ module my_design (
    wire reset = ! rst_n;
 
    logic count_en, count_en1, count_en2;
-   /* logic [7:0] count;
+   logic [7:0] count;
 
+   /*
    always_ff @(posedge clk) begin
       if (reset) count <= 8'h00;
       else if (count_en1 || count_en2) count <= count + 8'h01;
-   end*/
+   end
+   */
 
    assign count_en = count_en1 | count_en2;
-   //assign uo_out = count;
+   assign uo_out = count;
 
    uart_timer #(
       .CYCLES_PER_BIT(20000000)
@@ -151,17 +153,17 @@ module my_design (
    );
 
    shift_register #(
-      .RST_VALUE(1)
+      .RST_VALUE(32'h0000_000F)
    )
    dummy_shifter (
       .clk(clk),
-      .rst(reset),
-      .serial_in(uo_out[0]),
+      .rst(ui_in[7]),
+      .serial_in(count[0]),
       .shift_enable(count_en),
       .parallel_in(8'h00),
       .load_enable(1'b0),
       .serial_out(),
-      .parallel_out(uo_out)
+      .parallel_out(count)
    );
 
    // Just set up a simple timer to test things
