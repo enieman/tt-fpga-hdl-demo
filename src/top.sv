@@ -444,7 +444,6 @@ endmodule
       #(
          parameter int unsigned NUM_BITS = 8,
          parameter int unsigned RST_VALUE = 0
-         //parameter bit [7:0] RST_VALUE = 0
       )
       (
          input clk,
@@ -452,11 +451,9 @@ endmodule
          input serial_in,
          input shift_enable,
          input [NUM_BITS-1:0] parallel_in,
-         //input [7:0] parallel_in,
          input load_enable,
          output logic serial_out,
          output logic [NUM_BITS-1:0] parallel_out
-         //output logic [7:0] parallel_out
       );
 
       logic [NUM_BITS-1:0] register;
@@ -464,19 +461,10 @@ endmodule
 
       always_ff @(posedge clk) begin
          if (rst) register <= RST_VALUE[NUM_BITS-1:0];
-         //if (rst) register <= RST_VALUE;
          else if (load_enable) register <= parallel_in;
          else if (shift_enable) begin
             for (int unsigned i = 0; i < NUM_BITS-1; i++) register[i] <= register[i+1];
             register[NUM_BITS-1] <= serial_in;
-            /*register[0] <= register[1];
-            register[1] <= register[2];
-            register[2] <= register[3];
-            register[3] <= register[4];
-            register[4] <= register[5];
-            register[5] <= register[6];
-            register[6] <= register[7];
-            register[7] <= serial_in;*/
          end
          else register <= register;
       end
@@ -491,8 +479,8 @@ endmodule
    // UART Timer
    module uart_timer
       #(
-         // parameter int unsigned CYCLES_PER_BIT = 2083 // 20MHz clock, 9600 bit/sec
-         parameter bit [31:0] CYCLES_PER_BIT = 2083 // 20MHz clock, 9600 bit/sec
+         parameter int unsigned CYCLES_PER_BIT = 2083 // 20MHz clock, 9600 bit/sec
+         // parameter bit [31:0] CYCLES_PER_BIT = 2083 // 20MHz clock, 9600 bit/sec
       )
       (
          input clk,
@@ -501,22 +489,22 @@ endmodule
          output logic full_bit
       );
 
-      // localparam int unsigned HALF_BIT_CLOCKS = CYCLES_PER_BIT / 2;
-      localparam bit [31:0] HALF_BIT_CLOCKS = CYCLES_PER_BIT / 2;
-      // localparam int unsigned COUNTER_WIDTH = $clog2(HALF_BIT_CLOCKS);
+      localparam int unsigned HALF_BIT_CLOCKS = CYCLES_PER_BIT / 2;
+      // localparam bit [31:0] HALF_BIT_CLOCKS = CYCLES_PER_BIT / 2;
+      localparam int unsigned COUNTER_WIDTH = $clog2(HALF_BIT_CLOCKS);
 
-      // logic [COUNTER_WIDTH-1:0] count;
-      logic [31:0] count; // This should be plenty of bits
+      logic [COUNTER_WIDTH-1:0] count;
+      // logic [31:0] count; // This should be plenty of bits
       logic count_complete, toggle;
 
       // Counter, used to indicate when one half-bit has completed
       always_ff @(posedge clk) begin
          if (rst) count <= 'h0;
-         else if (count >= (HALF_BIT_CLOCKS-1)) count <= 'h0;
+         else if (count >= (HALF_BIT_CLOCKS[COUNTER_WIDTH-1:0]-1)) count <= 'h0;
          else count <= count + 'h1;
       end
 
-      assign count_complete = (count >= (HALF_BIT_CLOCKS-1)) ? 1'b1:1'b0;
+      assign count_complete = (count >= (HALF_BIT_CLOCKS[COUNTER_WIDTH-1:0]-1)) ? 1'b1:1'b0;
 
       // Toggle, used to indicate when two half-bits (AKA one full bit) have completed
       always_ff @(posedge clk) begin
