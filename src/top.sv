@@ -138,7 +138,7 @@ module my_design (
    end*/
 
    assign count_en = count_en1 | count_en2;
-   assign uo_out = count;
+   //assign uo_out = count;
 
    uart_timer #(
       .CYCLES_PER_BIT(20000000)
