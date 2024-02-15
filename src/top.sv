@@ -153,7 +153,7 @@ module my_design (
    );
 
    shift_register #(
-      .RST_VALUE(8'h0F)
+      .RST_VALUE(1)
    )
    dummy_shifter (
       .clk(clk),
