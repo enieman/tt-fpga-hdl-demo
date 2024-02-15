@@ -129,14 +129,15 @@ module my_design (
 );
    wire reset = ! rst_n;
 
-   logic count_en1, count_en2;
-   logic [7:0] count;
+   logic count_en, count_en1, count_en2;
+   /* logic [7:0] count;
 
    always_ff @(posedge clk) begin
       if (reset) count <= 8'h00;
       else if (count_en1 || count_en2) count <= count + 8'h01;
-   end
+   end*/
 
+   assign count_en = count_en1 | count_en2;
    assign uo_out = count;
 
    uart_timer #(
@@ -147,6 +148,20 @@ module my_design (
       .rst(reset),
       .half_bit(count_en1),
       .full_bit(count_en2)
+   );
+
+   shift_register #(
+      .RST_VALUE(1)
+   )
+   dummy_shifter (
+      .clk(clk),
+      .rst(reset),
+      .serial_in(uo_out[7]),
+      .shift_enable(count_en),
+      .parallel_in(8'h00),
+      .load_enable(1'b0),
+      .serial_out(),
+      .parallel_out(uo_out)
    );
 
    // Just set up a simple timer to test things
@@ -505,7 +520,7 @@ endmodule
    module uart_rx
       #(
          // parameter int unsigned CYCLES_PER_BIT = 2083 // 20MHz clock, 9600 bit/sec
-         parameter bit [15:0] CYCLES_PER_BIT = 2083 // 20MHz clock, 9600 bit/sec
+         parameter bit [31:0] CYCLES_PER_BIT = 2083 // 20MHz clock, 9600 bit/sec
       )
       (
          input clk,
@@ -593,7 +608,7 @@ endmodule
    module uart_tx
       #(
          // parameter int unsigned CYCLES_PER_BIT = 2083 // 20MHz clock, 9600 bit/sec
-         parameter bit [15:0] CYCLES_PER_BIT = 2083 // 20MHz clock, 9600 bit/sec
+         parameter bit [31:0] CYCLES_PER_BIT = 2083 // 20MHz clock, 9600 bit/sec
       )
       (
          input clk,
