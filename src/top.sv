@@ -129,7 +129,28 @@ module my_design (
 );
    wire reset = ! rst_n;
 
+   logic count_en1, count_en2;
+   logic [7:0] count;
+
+   always_ff @(posedge clk) begin
+      if (reset) count <= 8'h00;
+      else if (count_en1 || count_en2) count <= count + 8'h01;
+   end
+
+   assign uo_out = count;
+
+   uart_timer #(
+      .CYCLES_PER_BIT(20000000)
+   )
+   dummy_timer (
+      .clk(clk),
+      .rst(reset),
+      .half_bit(count_en1),
+      .full_bit(count_en2)
+   );
+
    // Just set up a simple timer to test things
+   /*
    logic [31:0] count;
    always_ff @(posedge clk) begin
       if (reset) count <= 32'h0000_0000;
@@ -145,6 +166,8 @@ module my_design (
    assign uo_out[5] = count < 32'd60000000 && count >= 32'd50000000 ? 1'b1 : 1'b0;
    assign uo_out[6] = count < 32'd70000000 && count >= 32'd60000000 ? 1'b1 : 1'b0;
    assign uo_out[7] = count < 32'd80000000 && count >= 32'd70000000 ? 1'b1 : 1'b0;
+
+   */
 
    /*
 
@@ -439,7 +462,7 @@ endmodule
    module uart_timer
       #(
          // parameter int unsigned CYCLES_PER_BIT = 2083 // 20MHz clock, 9600 bit/sec
-         parameter bit [15:0] CYCLES_PER_BIT = 2083 // 20MHz clock, 9600 bit/sec
+         parameter bit [31:0] CYCLES_PER_BIT = 2083 // 20MHz clock, 9600 bit/sec
       )
       (
          input clk,
@@ -449,11 +472,11 @@ endmodule
       );
 
       // localparam int unsigned HALF_BIT_CLOCKS = CYCLES_PER_BIT / 2;
-      localparam bit [15:0] HALF_BIT_CLOCKS = CYCLES_PER_BIT / 2;
+      localparam bit [31:0] HALF_BIT_CLOCKS = CYCLES_PER_BIT / 2;
       // localparam int unsigned COUNTER_WIDTH = $clog2(HALF_BIT_CLOCKS);
 
       // logic [COUNTER_WIDTH-1:0] count;
-      logic [15:0] count; // This should be plenty of bits
+      logic [31:0] count; // This should be plenty of bits
       logic count_complete, toggle;
 
       // Counter, used to indicate when one half-bit has completed
