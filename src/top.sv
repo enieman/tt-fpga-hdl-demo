@@ -162,8 +162,8 @@ module my_design (
    */
 
    // UART Feedback
-   // localparam int unsigned CYCLES_PER_BIT = 20000000;
-   localparam int unsigned CYCLES_PER_BIT = 2083;
+   localparam int unsigned CYCLES_PER_BIT = 20000000;
+   // localparam int unsigned CYCLES_PER_BIT = 2083;
 
    logic reset, request, uart_link, data_ready, request_ff, data_ready_ff;
    logic [7:0] data_out, data_out_latched;
