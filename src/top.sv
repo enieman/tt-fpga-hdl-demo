@@ -442,41 +442,41 @@ endmodule
    // UART Shift Register
    module shift_register
       #(
-         //parameter int unsigned NUM_BITS = 8,
-         //parameter int unsigned RST_VALUE = 0
-         parameter bit [7:0] RST_VALUE = 0
+         parameter int unsigned NUM_BITS = 8,
+         parameter int unsigned RST_VALUE = 0
+         //parameter bit [7:0] RST_VALUE = 0
       )
       (
          input clk,
          input rst,
          input serial_in,
          input shift_enable,
-         //input [NUM_BITS-1:0] parallel_in,
-         input [7:0] parallel_in,
+         input [NUM_BITS-1:0] parallel_in,
+         //input [7:0] parallel_in,
          input load_enable,
          output logic serial_out,
-         //output logic [NUM_BITS-1:0] parallel_out
-         output logic [7:0] parallel_out
+         output logic [NUM_BITS-1:0] parallel_out
+         //output logic [7:0] parallel_out
       );
 
-      //logic [NUM_BITS-1:0] register;
-      logic [7:0] register;
+      logic [NUM_BITS-1:0] register;
+      //logic [7:0] register;
 
       always_ff @(posedge clk) begin
-         //if (rst) register <= RST_VALUE[NUM_BITS-1:0];
-         if (rst) register <= RST_VALUE;
+         if (rst) register <= RST_VALUE[NUM_BITS-1:0];
+         //if (rst) register <= RST_VALUE;
          else if (load_enable) register <= parallel_in;
          else if (shift_enable) begin
-            //for (int unsigned i = 0; i < NUM_BITS-1; i++) register[i] <= register[i+1];
-            //register[NUM_BITS-1] <= serial_in;
-            register[0] <= register[1];
+            for (int unsigned i = 0; i < NUM_BITS-1; i++) register[i] <= register[i+1];
+            register[NUM_BITS-1] <= serial_in;
+            /*register[0] <= register[1];
             register[1] <= register[2];
             register[2] <= register[3];
             register[3] <= register[4];
             register[4] <= register[5];
             register[5] <= register[6];
             register[6] <= register[7];
-            register[7] <= serial_in;
+            register[7] <= serial_in;*/
          end
          else register <= register;
       end
