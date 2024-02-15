@@ -281,7 +281,7 @@ logic [6:0] L0_sseg_segment_n_a0;
             
             
                // Connect Tiny Tapeout outputs. Note that uio_ outputs are not available in the Tiny-Tapeout-3-based FPGA boards.
-               assign uo_out = 8'b0;
+               // *uo_out = 8'b0;
                
                
             //_\end_source
