@@ -153,11 +153,11 @@ module my_design (
    );
 
    shift_register #(
-      .RST_VALUE(32'h0000_000F)
+      .RST_VALUE(8'h0F)
    )
    dummy_shifter (
       .clk(clk),
-      .rst(ui_in[7]),
+      .rst(reset | ui_in[7]),
       .serial_in(wrap),
       .shift_enable(count_en),
       .parallel_in(8'h00),
@@ -463,7 +463,8 @@ endmodule
       logic [7:0] register;
 
       always_ff @(posedge clk) begin
-         if (rst) register <= RST_VALUE[NUM_BITS-1:0];
+         //if (rst) register <= RST_VALUE[NUM_BITS-1:0];
+         if (rst) register <= RST_VALUE;
          else if (load_enable) register <= parallel_in;
          else if (shift_enable) begin
             //for (int unsigned i = 0; i < NUM_BITS-1; i++) register[i] <= register[i+1];
