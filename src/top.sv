@@ -480,11 +480,15 @@ endmodule
       // Counter, used to indicate when one half-bit has completed
       always_ff @(posedge clk) begin
          if (rst) count <= 'h0;
+         /* verilator lint_off WIDTHEXPAND */
          else if (count >= (HALF_BIT_CLOCKS-1)) count <= 'h0;
+         /* verilator lint_on WIDTHEXPAND */
          else count <= count + 'h1;
       end
 
+      /* verilator lint_off WIDTHEXPAND */
       assign count_complete = (count >= (HALF_BIT_CLOCKS-1)) ? 1'b1:1'b0;
+      /* verilator lint_on WIDTHEXPAND */
 
       // Toggle, used to indicate when two half-bits (AKA one full bit) have completed
       always_ff @(posedge clk) begin
@@ -672,7 +676,8 @@ endmodule
    // UART Controller
    module uart_ctrl
       #(
-         parameter int unsigned NUM_MEM_BYTES = 96 // 16 instr + 8 data mem
+         parameter int unsigned MEM_ADDR_WIDTH = 7 // 128 bytes of storage, or 32 four-byte words
+         // parameter int unsigned NUM_MEM_BYTES = 96 // 16 instr + 8 data mem
       )
       (
          input  logic clk,
@@ -684,13 +689,18 @@ endmodule
          input  logic tx_error,
          output logic cpu_rst,
          output logic tx_req,
+         output logic mem_ctrl,
          output logic mem_rd_en,
          output logic mem_wr_en,
-         output logic [$clog2(NUM_MEM_BYTES)-1:0] mem_addr
+         // output logic [$clog2(NUM_MEM_BYTES)-1:0] mem_addr
+         output logic [MEM_ADDR_WIDTH-1:0] mem_addr
       );
 
+      localparam int unsigned NUM_MEM_BYTES = 2**MEM_ADDR_WIDTH;
+
       // Declare intermediate wires
-      logic rd_complete, wr_data_ready, mem_addr_max;
+      // logic rd_complete, wr_data_ready, mem_addr_max;
+      logic rd_complete, wr_data_ready;
       enum logic [1:0] {
          STATE_RESET      = 2'b00,
          STATE_DATA_WRITE = 2'b01,
@@ -699,8 +709,11 @@ endmodule
       } state;
 
       // Assign intermediate wires
-      assign mem_addr_max = mem_addr >= NUM_MEM_BYTES-1 ? 1'b1 : 1'b0;
-      assign rd_complete = (state == STATE_DATA_READ) ? mem_addr_max & mem_rd_en : 1'b0;
+      // assign mem_addr_max = mem_addr >= NUM_MEM_BYTES-1 ? 1'b1 : 1'b0;
+      // assign rd_complete = (state == STATE_DATA_READ) ? mem_addr_max & mem_rd_en : 1'b0;
+      /* verilator lint_off WIDTHEXPAND */
+      assign rd_complete = ((state == STATE_DATA_READ) && (mem_addr == NUM_MEM_BYTES-1) && mem_rd_en) ? 1'b1 : 1'b0;
+      /* verilator lint_on WIDTHEXPAND */
       pos_edge_detector wr_data_ready_detect (
          .clk(clk),
          .rst(rst),
@@ -726,15 +739,18 @@ endmodule
          if (rst) mem_addr <= '0;
          else if (state == STATE_RESET) mem_addr <= '0;
          else if (state == STATE_IDLE)  mem_addr <= '0;
-         else if ((state == STATE_DATA_WRITE && mem_wr_en) || (state == STATE_DATA_READ  && mem_rd_en)) begin
-            if (mem_addr_max) mem_addr <= '0;
-            else mem_addr <= mem_addr + 1;
-         end
+         // else if ((state == STATE_DATA_WRITE && mem_wr_en) || (state == STATE_DATA_READ  && mem_rd_en)) begin
+         //    if (mem_addr_max) mem_addr <= '0;
+         //    else mem_addr <= mem_addr + 1;
+         // end
+         else if ((state == STATE_DATA_WRITE && mem_wr_en) || (state == STATE_DATA_READ  && mem_rd_en))
+             mem_addr <= mem_addr + 1;
       end //always_ff
 
       // Connect outputs
       assign cpu_rst   = (state == STATE_RESET || state == STATE_DATA_WRITE || rst) ? 1'b1 : 1'b0;
       assign tx_req    = (state == STATE_DATA_READ) ? tx_empty : 1'b0;
+      assign mem_ctrl  = (state == STATE_RESET || state == STATE_DATA_WRITE || rst) ? 1'b1 : 1'b0;
       assign mem_rd_en = (state == STATE_DATA_READ) ? tx_empty : 1'b0;
       assign mem_wr_en = (state == STATE_DATA_WRITE) ? wr_data_ready : 1'b0;
 
@@ -743,17 +759,34 @@ endmodule
    // Register File ("Memory")
    module mem_rf
       #(
-         parameter int unsigned NUM_MEM_BYTES = 96 // 16 instr + 8 data mem
+         parameter int unsigned MEM_ADDR_WIDTH = 7 // 128 bytes of storage, or 32 four-byte words
+         // parameter int unsigned NUM_MEM_BYTES = 96 // 16 instr + 8 data mem
       )
       (
          input logic clk,
          input logic rst,
+         // UART Memory Interface
+         input logic umem_ctrl,
          input logic umem_rd_en,
          input logic umem_wr_en,
-         input logic [$clog2(NUM_MEM_BYTES)-1:0] umem_addr,
+         // input logic [$clog2(NUM_MEM_BYTES)-1:0] umem_addr,
+         input logic [MEM_ADDR_WIDTH-1:0] umem_addr,
          input logic [7:0] umem_wr_data,
-         output logic [7:0] umem_rd_data
+         output logic [7:0] umem_rd_data,
+         // Instruction Memory Interface
+         input logic imem_rd_en,
+         input logic [MEM_ADDR_WIDTH-3:0] imem_rd_addr, // Two fewer bits than umem since addressing 4 byte values
+         output logic [31:0] imem_rd_data,
+         // Data Memory Interface
+         input logic dmem_rd_en,
+         input logic dmem_wr_en,
+         input logic [MEM_ADDR_WIDTH-3:0] dmem_addr, // Two fewer bits than umem since addressing 4 byte values
+         input logic [3:0] dmem_wr_strobe,
+         input logic [31:0] dmem_wr_data,
+         output logic [31:0] dmem_rd_data
       );
+
+      localparam int unsigned NUM_MEM_BYTES = 2**MEM_ADDR_WIDTH;
 
       logic [7:0] reg_file [NUM_MEM_BYTES];
 
@@ -761,11 +794,21 @@ endmodule
          if (rst) begin
             for (int unsigned i = 0; i < NUM_MEM_BYTES; i++) reg_file[i] = 8'h00;
          end // if
-         else if (umem_wr_en && umem_addr < NUM_MEM_BYTES)
+         // else if (umem_ctrl && umem_wr_en && umem_addr < NUM_MEM_BYTES)
+         else if (umem_ctrl && umem_wr_en)
             reg_file[umem_addr] <= umem_wr_data;
+         else if (!umem_ctrl && dmem_wr_en) begin
+            reg_file[{dmem_addr, 2'b00}] <= dmem_wr_data[7:0];
+            reg_file[{dmem_addr, 2'b01}] <= dmem_wr_data[15:8];
+            reg_file[{dmem_addr, 2'b10}] <= dmem_wr_data[23:16];
+            reg_file[{dmem_addr, 2'b11}] <= dmem_wr_data[31:24];
+         end
       end // always_ff
 
-      assign umem_rd_data = (umem_addr < NUM_MEM_BYTES) ? reg_file[umem_addr] : 8'h00;
+      // assign umem_rd_data = (umem_addr < NUM_MEM_BYTES) ? reg_file[umem_addr] : 8'h00;
+      assign umem_rd_data = reg_file[umem_addr];
+      assign imem_rd_data = {reg_file[{imem_rd_addr, 2'b00}], reg_file[{imem_rd_addr, 2'b01}], reg_file[{imem_rd_addr, 2'b10}], reg_file[{imem_rd_addr, 2'b11}]};
+      assign dmem_rd_data = {reg_file[{dmem_addr, 2'b00}], reg_file[{dmem_addr, 2'b01}], reg_file[{dmem_addr, 2'b10}], reg_file[{dmem_addr, 2'b11}]};
 
    endmodule
 
@@ -773,20 +816,34 @@ endmodule
    module uart_top
       #(
          parameter int unsigned CYCLES_PER_BIT = 2083, // 20MHz clock, 9600 bit/sec
-         parameter int unsigned NUM_MEM_BYTES = 96 // 16 instr + 8 data mem
+         // parameter int unsigned NUM_MEM_BYTES = 96 // 16 instr + 8 data mem
+         parameter int unsigned MEM_ADDR_WIDTH = 7 // 128 bytes of storage, or 32 four-byte words
       )
       (
          input logic clk,
+         // User Interface
          input logic rst,
          input logic wr_complete,
          input logic rd_req,
          input logic rx_in,
          output logic tx_out,
-         output logic cpu_rst
+         // CPU Interface
+         output logic cpu_rst,
+         input logic imem_rd_en,
+         input logic [MEM_ADDR_WIDTH-3:0] imem_rd_addr,
+         output logic [31:0] imem_rd_data,
+         input logic dmem_rd_en,
+         input logic dmem_wr_en,
+         input logic [MEM_ADDR_WIDTH-3:0] dmem_addr,
+         input logic [3:0] dmem_wr_strobe,
+         input logic [31:0] dmem_wr_data,
+         output logic [31:0] dmem_rd_data
       );
-      logic rx_ready, tx_empty, tx_error, tx_req, umem_rd_en, umem_wr_en;
-      logic [$clog2(NUM_MEM_BYTES)-1:0] umem_addr;
+      logic rx_ready, tx_empty, tx_error, tx_req, umem_ctrl, umem_rd_en, umem_wr_en;
+      // logic [$clog2(NUM_MEM_BYTES)-1:0] umem_addr;
+      logic [MEM_ADDR_WIDTH-1:0] umem_addr;
       logic [7:0] umem_rd_data, umem_wr_data;
+
       uart_rx #(
          .CYCLES_PER_BIT(CYCLES_PER_BIT))
       uart_rx0 (
@@ -795,6 +852,7 @@ endmodule
          .uart_rx_in(rx_in),
          .data(umem_wr_data),
          .ready(rx_ready));
+
       uart_tx #(
          .CYCLES_PER_BIT(CYCLES_PER_BIT))
       uart_tx0 (
@@ -805,8 +863,10 @@ endmodule
          .req(tx_req),
          .empty(tx_empty),
          .error(tx_error));
+
       uart_ctrl #(
-         .NUM_MEM_BYTES(NUM_MEM_BYTES))
+         // .NUM_MEM_BYTES(NUM_MEM_BYTES))
+         .MEM_ADDR_WIDTH(MEM_ADDR_WIDTH))
       uart_ctrl0 (
          .clk(clk),
          .rst(rst),
@@ -817,26 +877,40 @@ endmodule
          .tx_error(tx_error),
          .cpu_rst(cpu_rst),
          .tx_req(tx_req),
+         .mem_ctrl(umem_ctrl),
          .mem_rd_en(umem_rd_en),
          .mem_wr_en(umem_wr_en),
          .mem_addr(umem_addr));
+
       mem_rf #(
-         .NUM_MEM_BYTES(NUM_MEM_BYTES))
+         // .NUM_MEM_BYTES(NUM_MEM_BYTES))
+         .MEM_ADDR_WIDTH(MEM_ADDR_WIDTH))
       mem_rf0 (
          .clk(clk),
          .rst(rst),
+         .umem_ctrl(umem_ctrl),
          .umem_rd_en(umem_rd_en),
          .umem_wr_en(umem_wr_en),
          .umem_addr(umem_addr),
          .umem_wr_data(umem_wr_data),
-         .umem_rd_data(umem_rd_data));
+         .umem_rd_data(umem_rd_data),
+         .imem_rd_en(imem_rd_en),
+         .imem_rd_addr(imem_rd_addr),
+         .imem_rd_data(imem_rd_data),
+         .dmem_rd_en(dmem_rd_en),
+         .dmem_wr_en(dmem_wr_en),
+         .dmem_addr(dmem_addr),
+         .dmem_wr_strobe(dmem_wr_strobe),
+         .dmem_wr_data(dmem_wr_data),
+         .dmem_rd_data(dmem_rd_data));
    endmodule
 
    // UART R/W Bufferspace Demo
    module uart_mem_rw_demo
       #(
-         parameter int unsigned CYCLES_PER_BIT = 20000000, // 20MHz clock, 1 bit/sec
-         parameter int unsigned NUM_MEM_BYTES = 4 // Smaller memory makes easier to test with buttons and lights
+         parameter int unsigned CYCLES_PER_BIT = 5000000, // 20MHz clock, 4 bit/sec
+         // parameter int unsigned NUM_MEM_BYTES = 4 // Smaller memory makes easier to test with buttons and lights
+         parameter int unsigned MEM_ADDR_WIDTH = 3 // 8 bytes of storage, 2 x 32-bit value storage
       )
       (
          input logic clk,
@@ -873,7 +947,8 @@ endmodule
 
       uart_top #(
          .CYCLES_PER_BIT(CYCLES_PER_BIT),
-         .NUM_MEM_BYTES(NUM_MEM_BYTES))
+         // .NUM_MEM_BYTES(NUM_MEM_BYTES))
+         .MEM_ADDR_WIDTH(MEM_ADDR_WIDTH))
       uart_top0 (
          .clk(clk),
          .rst(rst),
@@ -881,7 +956,16 @@ endmodule
          .rd_req(rd_req),
          .rx_in(rx_in),
          .tx_out(tx_out),
-         .cpu_rst(cpu_rst));
+         .cpu_rst(cpu_rst),
+         .imem_rd_en(1'b0),
+         .imem_rd_addr('0),
+         .imem_rd_data(),
+         .dmem_rd_en(1'b0),
+         .dmem_wr_en(1'b0),
+         .dmem_addr('0),
+         .dmem_wr_strobe(4'h0),
+         .dmem_wr_data('0),
+         .dmem_rd_data());
 
       uart_tx #(
          .CYCLES_PER_BIT(CYCLES_PER_BIT))
