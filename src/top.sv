@@ -58,7 +58,7 @@ module tt_um_template (
    // Parameters for Memory Sizing and UART Baud
    localparam int unsigned CYCLES_PER_BIT = 2083;    // 20MHz clock, 9600 bit/sec
    localparam int unsigned IMEM_BYTE_ADDR_WIDTH = 6; // 64 bytes / 16 words
-   localparam int unsigned DMEM_BYTE_ADDR_WIDTH = 6; // 64 bytes / 16 words
+   localparam int unsigned DMEM_BYTE_ADDR_WIDTH = 5; // 32 bytes / 8 words
 
    // User Interface
    wire rst = ! rst_n | ui_in[7];
