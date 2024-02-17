@@ -80,8 +80,8 @@ module tt_um_template (
 
    assign uo_out[7] = reset;
    assign uo_out[6] = wr_complete | rd_req;
-   assign uo_out[5] = rx_in;
-   assign uo_out[4] = tx_out;
+   assign uo_out[5] = ~rx_in;
+   assign uo_out[4] = ~tx_out;
    assign uo_out[2] = tx_out;
    assign uo_out[0] = ui_in[0];
 
