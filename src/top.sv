@@ -598,10 +598,10 @@ endmodule
          if (rst) state <= STATE_RESET;
          else begin
             case (state)
-               STATE_RESET:      if (!rst)                            state <= STATE_DATA_WRITE;
-               STATE_DATA_WRITE: if (wr_complete || all_imem_written) state <= STATE_IDLE;
-               STATE_IDLE:       if (rd_req)                          state <= STATE_DATA_READ;
-               STATE_DATA_READ:  if (rd_complete)                     state <= STATE_IDLE;
+               STATE_RESET:      if (!rst)             state <= STATE_DATA_WRITE;
+               STATE_DATA_WRITE: if (all_imem_written) state <= STATE_IDLE;
+               STATE_IDLE:       if (rx_ready)         state <= STATE_DATA_READ;
+               STATE_DATA_READ:  if (rd_complete)      state <= STATE_IDLE;
             endcase
          end // else
       end // always_ff
