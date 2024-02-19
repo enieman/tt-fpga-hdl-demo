@@ -58,7 +58,7 @@ module tt_um_template (
    // Parameters for Memory Sizing and UART Baud
    localparam int unsigned COUNTER_WIDTH = 24;
    localparam int unsigned IMEM_BYTE_ADDR_WIDTH = 6; // 64 bytes / 16 words
-   localparam int unsigned DMEM_BYTE_ADDR_WIDTH = 6; // 64 bytes / 16 words
+   localparam int unsigned DMEM_BYTE_ADDR_WIDTH = 5; // 32 bytes / 8 words
 
    // User Interface
    wire rst = ! rst_n | ui_in[7];
@@ -1167,7 +1167,7 @@ logic [31:0] FpgaPins_Fpga_CPU_Xreg_value_a3 [15:0],
                   //_@4 // Data Memory R/W
                      assign dmem_rd_en = FpgaPins_Fpga_CPU_valid_load_a4;
                      assign dmem_wr_en = FpgaPins_Fpga_CPU_valid_store_a4;
-                     assign dmem_addr = FpgaPins_Fpga_CPU_result_a4[6-1:2];
+                     assign dmem_addr = FpgaPins_Fpga_CPU_result_a4[5-1:2];
                      assign dmem_wr_byte_en = 4'b1111; // Just write all four bytes for now
                      assign dmem_wr_data = FpgaPins_Fpga_CPU_src2_value_a4;
                      assign FpgaPins_Fpga_CPU_ld_data_a4[31:0] = dmem_rd_data;
