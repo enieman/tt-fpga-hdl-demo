@@ -73,13 +73,10 @@ module tt_um_template (
     input  wire       rst_n     // reset_n - low to reset
 );
    wire reset       = ! rst_n | ui_in[7];
-   wire wr_complete = ui_in[5];
-   wire rd_req      = ui_in[4];
    wire rx_in       = ui_in[2];
    wire tx_out;
 
    assign uo_out[7] = reset;
-   assign uo_out[6] = wr_complete | rd_req;
    assign uo_out[5] = ~rx_in;
    assign uo_out[4] = ~tx_out;
    assign uo_out[2] = tx_out;
@@ -88,8 +85,6 @@ module tt_um_template (
    uart_mem_rw_demo demo(
          .clk(clk),
          .rst(reset),
-         .wr_complete(wr_complete),
-         .rd_req(rd_req),
          .rx_in(rx_in),
          .tx_out(tx_out));
 
@@ -170,7 +165,7 @@ logic [6:0] L0_sseg_segment_n_a0;
 //_\TLV
    /* verilator lint_off UNOPTFLAT */
    // Connect Tiny Tapeout I/Os to Virtual FPGA Lab.
-   //_\source /raw.githubusercontent.com/osfpga/VirtualFPGALab/35e36bd144fddd75495d4cbc01c4fc50ac5bde6f/tlvlib/tinytapeoutlib.tlv 76   // Instantiated from top.tlv, 156 as: m5+tt_connections()
+   //_\source /raw.githubusercontent.com/osfpga/VirtualFPGALab/35e36bd144fddd75495d4cbc01c4fc50ac5bde6f/tlvlib/tinytapeoutlib.tlv 76   // Instantiated from top.tlv, 151 as: m5+tt_connections()
       assign L0_slideswitch_a0[7:0] = ui_in;
       assign L0_sseg_segment_n_a0[6:0] = ~ uo_out[6:0];
       assign L0_sseg_decimal_point_n_a0 = ~ uo_out[7];
@@ -178,7 +173,7 @@ logic [6:0] L0_sseg_segment_n_a0;
    //_\end_source
 
    // Instantiate the Virtual FPGA Lab.
-   //_\source /raw.githubusercontent.com/osfpga/VirtualFPGALab/a069f1e4e19adc829b53237b3e0b5d6763dc3194/tlvlib/fpgaincludes.tlv 307   // Instantiated from top.tlv, 159 as: m5+board(/top, /fpga, 7, $, , my_design)
+   //_\source /raw.githubusercontent.com/osfpga/VirtualFPGALab/a069f1e4e19adc829b53237b3e0b5d6763dc3194/tlvlib/fpgaincludes.tlv 307   // Instantiated from top.tlv, 154 as: m5+board(/top, /fpga, 7, $, , my_design)
       
       //_\source /raw.githubusercontent.com/osfpga/VirtualFPGALab/a069f1e4e19adc829b53237b3e0b5d6763dc3194/tlvlib/fpgaincludes.tlv 355   // Instantiated from /raw.githubusercontent.com/osfpga/VirtualFPGALab/a069f1e4e19adc829b53237b3e0b5d6763dc3194/tlvlib/fpgaincludes.tlv, 309 as: m4+thanks(m5__l(309)m5_eval(m5_get(BOARD_THANKS_ARGS)))
          //_/thanks
@@ -248,7 +243,7 @@ logic [6:0] L0_sseg_segment_n_a0;
       
    //_\end_source
    // Label the switch inputs [0..7] (1..8 on the physical switch panel) (top-to-bottom).
-   //_\source /raw.githubusercontent.com/osfpga/VirtualFPGALab/35e36bd144fddd75495d4cbc01c4fc50ac5bde6f/tlvlib/tinytapeoutlib.tlv 82   // Instantiated from top.tlv, 161 as: m5+tt_input_labels_viz(⌈"UNUSED", "UNUSED", "UNUSED", "UNUSED", "UNUSED", "UNUSED", "UNUSED", "UNUSED"⌉)
+   //_\source /raw.githubusercontent.com/osfpga/VirtualFPGALab/35e36bd144fddd75495d4cbc01c4fc50ac5bde6f/tlvlib/tinytapeoutlib.tlv 82   // Instantiated from top.tlv, 156 as: m5+tt_input_labels_viz(⌈"UNUSED", "UNUSED", "UNUSED", "UNUSED", "UNUSED", "UNUSED", "UNUSED", "UNUSED"⌉)
       for (input_label = 0; input_label <= 7; input_label++) begin : L1_InputLabel //_/input_label
          
       end
@@ -554,8 +549,6 @@ endmodule
       (
          input  logic clk,
          input  logic rst,
-         input  logic wr_complete,
-         input  logic rd_req,
          input  logic rx_ready,
          input  logic tx_empty,
          input  logic tx_error,
@@ -600,7 +593,7 @@ endmodule
             case (state)
                STATE_RESET:      if (!rst)             state <= STATE_DATA_WRITE;
                STATE_DATA_WRITE: if (all_imem_written) state <= STATE_IDLE;
-               STATE_IDLE:       if (rx_ready)         state <= STATE_DATA_READ;
+               STATE_IDLE:       if (wr_data_ready)    state <= STATE_DATA_READ;
                STATE_DATA_READ:  if (rd_complete)      state <= STATE_IDLE;
             endcase
          end // else
@@ -694,8 +687,6 @@ endmodule
          input logic clk,
          // User Interface
          input logic rst,
-         input logic wr_complete,
-         input logic rd_req,
          input logic rx_in,
          output logic tx_out,
          // CPU Interface
@@ -745,8 +736,6 @@ endmodule
       uart_ctrl0 (
          .clk(clk),
          .rst(rst),
-         .wr_complete(wr_complete),
-         .rd_req(rd_req),
          .rx_ready(rx_ready),
          .tx_empty(tx_empty),
          .tx_error(tx_error),
@@ -805,8 +794,6 @@ endmodule
       (
          input logic clk,
          input logic rst,
-         input logic wr_complete,
-         input logic rd_req,
          input logic rx_in,
          output logic tx_out
       );
@@ -827,8 +814,6 @@ endmodule
       uart_top0 (
          .clk(clk),
          .rst(rst),
-         .wr_complete(wr_complete),
-         .rd_req(rd_req),
          .rx_in(rx_in),
          .tx_out(tx_out),
          .cpu_rst(cpu_rst),
