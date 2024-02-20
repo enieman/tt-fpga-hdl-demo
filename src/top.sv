@@ -65,9 +65,9 @@ module tt_um_template (
 
    // User Interface
    wire rst = ! rst_n | ui_in[7]; // Provide a dedicated button input for RESET
-   wire rx_in = ui_in[2];         // TO-DO: Determine which pin I need to use, look at Pmod pinout
+   wire rx_in = ui_in[1];         // Pin 2 of the USBUART Pmod is RX (data from host to Pmod)
    wire tx_out;
-   assign uo_out[2] = tx_out;     // TO-DO: Determine which pin I need to use, look at Pmod pinout
+   assign uo_out[2] = tx_out;     // Pin 3 of the USBUART Pmod is TX (data from Pmod to host)
    assign uo_out[7] = rst;        // Feedback of RST button, intended to use with LED
    assign uo_out[6] = reset;      // Feedback of CPU reset, indicates if UART controller is in write mode (reset = 1) or read mode (reset = 0)
    assign uo_out[5] = ~rx_in;     // Feedback of RX line, intended to use with LED
