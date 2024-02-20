@@ -5,7 +5,7 @@
    // Include Tiny Tapeout Lab.
    // Included URL: "https://raw.githubusercontent.com/os-fpga/Virtual-FPGA-Lab/35e36bd144fddd75495d4cbc01c4fc50ac5bde6f/tlv_lib/tiny_tapeout_lib.tlv"// Included URL: "https://raw.githubusercontent.com/os-fpga/Virtual-FPGA-Lab/a069f1e4e19adc829b53237b3e0b5d6763dc3194/tlv_lib/fpga_includes.tlv"
    // Included URL: "https://raw.githubusercontent.com/efabless/chipcraft---mest-course/main/tlv_lib/risc-v_shell_lib.tlv"// Included URL: "https://raw.githubusercontent.com/stevehoover/warp-v_includes/450357b4993fa480e7fca57dc346e39cba21b6bc/risc-v_defs.tlv"
-//_\source top.tlv 311
+//_\source top.tlv 285
 
 //_\SV
 
@@ -57,7 +57,7 @@ module tt_um_template (
 
    // Parameters for Memory Sizing and UART Baud
    localparam int unsigned COUNTER_WIDTH = 24;
-   localparam int unsigned IMEM_BYTE_ADDR_WIDTH = 5; // 32 bytes / 8 words
+   localparam int unsigned IMEM_BYTE_ADDR_WIDTH = 6; // 64 bytes / 16 words
    localparam int unsigned DMEM_BYTE_ADDR_WIDTH = 4; // 16 bytes / 4 words
 
    // User Interface
@@ -131,10 +131,12 @@ logic [7:0] L0_sseg_digit_n_a0;
 logic [6:0] L0_sseg_segment_n_a0;
 
 // For /fpga_pins/fpga|cpu$alu_op1.
-logic [31:0] FpgaPins_Fpga_CPU_alu_op1_a1;
+logic [31:0] FpgaPins_Fpga_CPU_alu_op1_a2,
+             FpgaPins_Fpga_CPU_alu_op1_a3;
 
 // For /fpga_pins/fpga|cpu$alu_op2.
-logic [31:0] FpgaPins_Fpga_CPU_alu_op2_a1;
+logic [31:0] FpgaPins_Fpga_CPU_alu_op2_a2,
+             FpgaPins_Fpga_CPU_alu_op2_a3;
 
 // For /fpga_pins/fpga|cpu$funct3.
 logic [2:0] FpgaPins_Fpga_CPU_funct3_a1;
@@ -143,19 +145,25 @@ logic [2:0] FpgaPins_Fpga_CPU_funct3_a1;
 logic [6:0] FpgaPins_Fpga_CPU_funct7_a1;
 
 // For /fpga_pins/fpga|cpu$imm.
-logic [31:0] FpgaPins_Fpga_CPU_imm_a1;
+logic [31:0] FpgaPins_Fpga_CPU_imm_a1,
+             FpgaPins_Fpga_CPU_imm_a2;
 
 // For /fpga_pins/fpga|cpu$inc_pc.
-logic [31:0] FpgaPins_Fpga_CPU_inc_pc_a1;
+logic [31:0] FpgaPins_Fpga_CPU_inc_pc_a1,
+             FpgaPins_Fpga_CPU_inc_pc_a2,
+             FpgaPins_Fpga_CPU_inc_pc_a3;
 
 // For /fpga_pins/fpga|cpu$instr.
-logic [31:0] FpgaPins_Fpga_CPU_instr_a1;
+logic [31:0] FpgaPins_Fpga_CPU_instr_a0,
+             FpgaPins_Fpga_CPU_instr_a1;
 
 // For /fpga_pins/fpga|cpu$is_add.
 logic FpgaPins_Fpga_CPU_is_add_a1;
 
 // For /fpga_pins/fpga|cpu$is_add_op.
-logic FpgaPins_Fpga_CPU_is_add_op_a1;
+logic FpgaPins_Fpga_CPU_is_add_op_a1,
+      FpgaPins_Fpga_CPU_is_add_op_a2,
+      FpgaPins_Fpga_CPU_is_add_op_a3;
 
 // For /fpga_pins/fpga|cpu$is_addi.
 logic FpgaPins_Fpga_CPU_is_addi_a1;
@@ -164,34 +172,50 @@ logic FpgaPins_Fpga_CPU_is_addi_a1;
 logic FpgaPins_Fpga_CPU_is_and_a1;
 
 // For /fpga_pins/fpga|cpu$is_and_op.
-logic FpgaPins_Fpga_CPU_is_and_op_a1;
+logic FpgaPins_Fpga_CPU_is_and_op_a1,
+      FpgaPins_Fpga_CPU_is_and_op_a2,
+      FpgaPins_Fpga_CPU_is_and_op_a3;
 
 // For /fpga_pins/fpga|cpu$is_andi.
 logic FpgaPins_Fpga_CPU_is_andi_a1;
 
 // For /fpga_pins/fpga|cpu$is_auipc.
-logic FpgaPins_Fpga_CPU_is_auipc_a1;
+logic FpgaPins_Fpga_CPU_is_auipc_a1,
+      FpgaPins_Fpga_CPU_is_auipc_a2;
 
 // For /fpga_pins/fpga|cpu$is_b_instr.
-logic FpgaPins_Fpga_CPU_is_b_instr_a1;
+logic FpgaPins_Fpga_CPU_is_b_instr_a1,
+      FpgaPins_Fpga_CPU_is_b_instr_a2;
 
 // For /fpga_pins/fpga|cpu$is_beq.
-logic FpgaPins_Fpga_CPU_is_beq_a1;
+logic FpgaPins_Fpga_CPU_is_beq_a1,
+      FpgaPins_Fpga_CPU_is_beq_a2,
+      FpgaPins_Fpga_CPU_is_beq_a3;
 
 // For /fpga_pins/fpga|cpu$is_bge.
-logic FpgaPins_Fpga_CPU_is_bge_a1;
+logic FpgaPins_Fpga_CPU_is_bge_a1,
+      FpgaPins_Fpga_CPU_is_bge_a2,
+      FpgaPins_Fpga_CPU_is_bge_a3;
 
 // For /fpga_pins/fpga|cpu$is_bgeu.
-logic FpgaPins_Fpga_CPU_is_bgeu_a1;
+logic FpgaPins_Fpga_CPU_is_bgeu_a1,
+      FpgaPins_Fpga_CPU_is_bgeu_a2,
+      FpgaPins_Fpga_CPU_is_bgeu_a3;
 
 // For /fpga_pins/fpga|cpu$is_blt.
-logic FpgaPins_Fpga_CPU_is_blt_a1;
+logic FpgaPins_Fpga_CPU_is_blt_a1,
+      FpgaPins_Fpga_CPU_is_blt_a2,
+      FpgaPins_Fpga_CPU_is_blt_a3;
 
 // For /fpga_pins/fpga|cpu$is_bltu.
-logic FpgaPins_Fpga_CPU_is_bltu_a1;
+logic FpgaPins_Fpga_CPU_is_bltu_a1,
+      FpgaPins_Fpga_CPU_is_bltu_a2,
+      FpgaPins_Fpga_CPU_is_bltu_a3;
 
 // For /fpga_pins/fpga|cpu$is_bne.
-logic FpgaPins_Fpga_CPU_is_bne_a1;
+logic FpgaPins_Fpga_CPU_is_bne_a1,
+      FpgaPins_Fpga_CPU_is_bne_a2,
+      FpgaPins_Fpga_CPU_is_bne_a3;
 
 // For /fpga_pins/fpga|cpu$is_i_instr.
 logic FpgaPins_Fpga_CPU_is_i_instr_a1;
@@ -203,10 +227,13 @@ logic FpgaPins_Fpga_CPU_is_j_instr_a1;
 logic FpgaPins_Fpga_CPU_is_jal_a1;
 
 // For /fpga_pins/fpga|cpu$is_jalr.
-logic FpgaPins_Fpga_CPU_is_jalr_a1;
+logic FpgaPins_Fpga_CPU_is_jalr_a1,
+      FpgaPins_Fpga_CPU_is_jalr_a2;
 
 // For /fpga_pins/fpga|cpu$is_jump.
-logic FpgaPins_Fpga_CPU_is_jump_a1;
+logic FpgaPins_Fpga_CPU_is_jump_a1,
+      FpgaPins_Fpga_CPU_is_jump_a2,
+      FpgaPins_Fpga_CPU_is_jump_a3;
 
 // For /fpga_pins/fpga|cpu$is_lb.
 logic FpgaPins_Fpga_CPU_is_lb_a1;
@@ -221,10 +248,14 @@ logic FpgaPins_Fpga_CPU_is_lh_a1;
 logic FpgaPins_Fpga_CPU_is_lhu_a1;
 
 // For /fpga_pins/fpga|cpu$is_load.
-logic FpgaPins_Fpga_CPU_is_load_a1;
+logic FpgaPins_Fpga_CPU_is_load_a1,
+      FpgaPins_Fpga_CPU_is_load_a2,
+      FpgaPins_Fpga_CPU_is_load_a3;
 
 // For /fpga_pins/fpga|cpu$is_lui.
-logic FpgaPins_Fpga_CPU_is_lui_a1;
+logic FpgaPins_Fpga_CPU_is_lui_a1,
+      FpgaPins_Fpga_CPU_is_lui_a2,
+      FpgaPins_Fpga_CPU_is_lui_a3;
 
 // For /fpga_pins/fpga|cpu$is_lw.
 logic FpgaPins_Fpga_CPU_is_lw_a1;
@@ -233,13 +264,16 @@ logic FpgaPins_Fpga_CPU_is_lw_a1;
 logic FpgaPins_Fpga_CPU_is_or_a1;
 
 // For /fpga_pins/fpga|cpu$is_or_op.
-logic FpgaPins_Fpga_CPU_is_or_op_a1;
+logic FpgaPins_Fpga_CPU_is_or_op_a1,
+      FpgaPins_Fpga_CPU_is_or_op_a2,
+      FpgaPins_Fpga_CPU_is_or_op_a3;
 
 // For /fpga_pins/fpga|cpu$is_ori.
 logic FpgaPins_Fpga_CPU_is_ori_a1;
 
 // For /fpga_pins/fpga|cpu$is_r_instr.
-logic FpgaPins_Fpga_CPU_is_r_instr_a1;
+logic FpgaPins_Fpga_CPU_is_r_instr_a1,
+      FpgaPins_Fpga_CPU_is_r_instr_a2;
 
 // For /fpga_pins/fpga|cpu$is_s_instr.
 logic FpgaPins_Fpga_CPU_is_s_instr_a1;
@@ -254,7 +288,9 @@ logic FpgaPins_Fpga_CPU_is_sh_a1;
 logic FpgaPins_Fpga_CPU_is_sll_a1;
 
 // For /fpga_pins/fpga|cpu$is_sll_op.
-logic FpgaPins_Fpga_CPU_is_sll_op_a1;
+logic FpgaPins_Fpga_CPU_is_sll_op_a1,
+      FpgaPins_Fpga_CPU_is_sll_op_a2,
+      FpgaPins_Fpga_CPU_is_sll_op_a3;
 
 // For /fpga_pins/fpga|cpu$is_slli.
 logic FpgaPins_Fpga_CPU_is_slli_a1;
@@ -263,7 +299,9 @@ logic FpgaPins_Fpga_CPU_is_slli_a1;
 logic FpgaPins_Fpga_CPU_is_slt_a1;
 
 // For /fpga_pins/fpga|cpu$is_slt_op.
-logic FpgaPins_Fpga_CPU_is_slt_op_a1;
+logic FpgaPins_Fpga_CPU_is_slt_op_a1,
+      FpgaPins_Fpga_CPU_is_slt_op_a2,
+      FpgaPins_Fpga_CPU_is_slt_op_a3;
 
 // For /fpga_pins/fpga|cpu$is_slti.
 logic FpgaPins_Fpga_CPU_is_slti_a1;
@@ -275,13 +313,17 @@ logic FpgaPins_Fpga_CPU_is_sltiu_a1;
 logic FpgaPins_Fpga_CPU_is_sltu_a1;
 
 // For /fpga_pins/fpga|cpu$is_sltu_op.
-logic FpgaPins_Fpga_CPU_is_sltu_op_a1;
+logic FpgaPins_Fpga_CPU_is_sltu_op_a1,
+      FpgaPins_Fpga_CPU_is_sltu_op_a2,
+      FpgaPins_Fpga_CPU_is_sltu_op_a3;
 
 // For /fpga_pins/fpga|cpu$is_sra.
 logic FpgaPins_Fpga_CPU_is_sra_a1;
 
 // For /fpga_pins/fpga|cpu$is_sra_op.
-logic FpgaPins_Fpga_CPU_is_sra_op_a1;
+logic FpgaPins_Fpga_CPU_is_sra_op_a1,
+      FpgaPins_Fpga_CPU_is_sra_op_a2,
+      FpgaPins_Fpga_CPU_is_sra_op_a3;
 
 // For /fpga_pins/fpga|cpu$is_srai.
 logic FpgaPins_Fpga_CPU_is_srai_a1;
@@ -290,16 +332,22 @@ logic FpgaPins_Fpga_CPU_is_srai_a1;
 logic FpgaPins_Fpga_CPU_is_srl_a1;
 
 // For /fpga_pins/fpga|cpu$is_srl_op.
-logic FpgaPins_Fpga_CPU_is_srl_op_a1;
+logic FpgaPins_Fpga_CPU_is_srl_op_a1,
+      FpgaPins_Fpga_CPU_is_srl_op_a2,
+      FpgaPins_Fpga_CPU_is_srl_op_a3;
 
 // For /fpga_pins/fpga|cpu$is_srli.
 logic FpgaPins_Fpga_CPU_is_srli_a1;
 
 // For /fpga_pins/fpga|cpu$is_store.
-logic FpgaPins_Fpga_CPU_is_store_a1;
+logic FpgaPins_Fpga_CPU_is_store_a1,
+      FpgaPins_Fpga_CPU_is_store_a2,
+      FpgaPins_Fpga_CPU_is_store_a3;
 
 // For /fpga_pins/fpga|cpu$is_sub.
-logic FpgaPins_Fpga_CPU_is_sub_a1;
+logic FpgaPins_Fpga_CPU_is_sub_a1,
+      FpgaPins_Fpga_CPU_is_sub_a2,
+      FpgaPins_Fpga_CPU_is_sub_a3;
 
 // For /fpga_pins/fpga|cpu$is_sw.
 logic FpgaPins_Fpga_CPU_is_sw_a1;
@@ -311,116 +359,143 @@ logic FpgaPins_Fpga_CPU_is_u_instr_a1;
 logic FpgaPins_Fpga_CPU_is_xor_a1;
 
 // For /fpga_pins/fpga|cpu$is_xor_op.
-logic FpgaPins_Fpga_CPU_is_xor_op_a1;
+logic FpgaPins_Fpga_CPU_is_xor_op_a1,
+      FpgaPins_Fpga_CPU_is_xor_op_a2,
+      FpgaPins_Fpga_CPU_is_xor_op_a3;
 
 // For /fpga_pins/fpga|cpu$is_xori.
 logic FpgaPins_Fpga_CPU_is_xori_a1;
 
 // For /fpga_pins/fpga|cpu$ld_data.
-logic [31:0] FpgaPins_Fpga_CPU_ld_data_a1;
+logic [31:0] FpgaPins_Fpga_CPU_ld_data_a4,
+             FpgaPins_Fpga_CPU_ld_data_a5;
 
 // For /fpga_pins/fpga|cpu$opcode.
 logic [6:0] FpgaPins_Fpga_CPU_opcode_a1;
 
 // For /fpga_pins/fpga|cpu$pc.
 logic [31:0] FpgaPins_Fpga_CPU_pc_a0,
-             FpgaPins_Fpga_CPU_pc_a1;
+             FpgaPins_Fpga_CPU_pc_a1,
+             FpgaPins_Fpga_CPU_pc_a2;
 
 // For /fpga_pins/fpga|cpu$rd.
-logic [4:0] FpgaPins_Fpga_CPU_rd_a1;
+logic [4:0] FpgaPins_Fpga_CPU_rd_a1,
+            FpgaPins_Fpga_CPU_rd_a2,
+            FpgaPins_Fpga_CPU_rd_a3,
+            FpgaPins_Fpga_CPU_rd_a4,
+            FpgaPins_Fpga_CPU_rd_a5;
 
 // For /fpga_pins/fpga|cpu$rd_valid.
-logic FpgaPins_Fpga_CPU_rd_valid_a1;
+logic FpgaPins_Fpga_CPU_rd_valid_a1,
+      FpgaPins_Fpga_CPU_rd_valid_a2,
+      FpgaPins_Fpga_CPU_rd_valid_a3;
 
 // For /fpga_pins/fpga|cpu$reset.
 logic FpgaPins_Fpga_CPU_reset_a0,
       FpgaPins_Fpga_CPU_reset_a1,
-      FpgaPins_Fpga_CPU_reset_a2;
+      FpgaPins_Fpga_CPU_reset_a2,
+      FpgaPins_Fpga_CPU_reset_a3;
 
 // For /fpga_pins/fpga|cpu$result.
-logic [31:0] FpgaPins_Fpga_CPU_result_a1;
+logic [31:0] FpgaPins_Fpga_CPU_result_a3;
+logic [31:2] FpgaPins_Fpga_CPU_result_a4;
 
 // For /fpga_pins/fpga|cpu$rf_rd_data1.
-logic [31:0] FpgaPins_Fpga_CPU_rf_rd_data1_a1;
+logic [31:0] FpgaPins_Fpga_CPU_rf_rd_data1_a2;
 
 // For /fpga_pins/fpga|cpu$rf_rd_data2.
-logic [31:0] FpgaPins_Fpga_CPU_rf_rd_data2_a1;
+logic [31:0] FpgaPins_Fpga_CPU_rf_rd_data2_a2;
 
 // For /fpga_pins/fpga|cpu$rf_rd_en1.
-logic FpgaPins_Fpga_CPU_rf_rd_en1_a1;
+logic FpgaPins_Fpga_CPU_rf_rd_en1_a2;
 
 // For /fpga_pins/fpga|cpu$rf_rd_en2.
-logic FpgaPins_Fpga_CPU_rf_rd_en2_a1;
+logic FpgaPins_Fpga_CPU_rf_rd_en2_a2;
 
 // For /fpga_pins/fpga|cpu$rf_rd_index1.
-logic [4:0] FpgaPins_Fpga_CPU_rf_rd_index1_a1;
+logic [4:0] FpgaPins_Fpga_CPU_rf_rd_index1_a2;
 
 // For /fpga_pins/fpga|cpu$rf_rd_index2.
-logic [4:0] FpgaPins_Fpga_CPU_rf_rd_index2_a1;
+logic [4:0] FpgaPins_Fpga_CPU_rf_rd_index2_a2;
 
 // For /fpga_pins/fpga|cpu$rf_wr_data.
-logic [31:0] FpgaPins_Fpga_CPU_rf_wr_data_a1;
+logic [31:0] FpgaPins_Fpga_CPU_rf_wr_data_a3;
 
 // For /fpga_pins/fpga|cpu$rf_wr_en.
-logic FpgaPins_Fpga_CPU_rf_wr_en_a1;
+logic FpgaPins_Fpga_CPU_rf_wr_en_a3;
 
 // For /fpga_pins/fpga|cpu$rf_wr_index.
-logic [4:0] FpgaPins_Fpga_CPU_rf_wr_index_a1;
+logic [4:0] FpgaPins_Fpga_CPU_rf_wr_index_a3;
 
 // For /fpga_pins/fpga|cpu$rs1.
-logic [4:0] FpgaPins_Fpga_CPU_rs1_a1;
+logic [4:0] FpgaPins_Fpga_CPU_rs1_a1,
+            FpgaPins_Fpga_CPU_rs1_a2;
 
 // For /fpga_pins/fpga|cpu$rs1_valid.
-logic FpgaPins_Fpga_CPU_rs1_valid_a1;
+logic FpgaPins_Fpga_CPU_rs1_valid_a1,
+      FpgaPins_Fpga_CPU_rs1_valid_a2;
 
 // For /fpga_pins/fpga|cpu$rs2.
-logic [4:0] FpgaPins_Fpga_CPU_rs2_a1;
+logic [4:0] FpgaPins_Fpga_CPU_rs2_a1,
+            FpgaPins_Fpga_CPU_rs2_a2;
 
 // For /fpga_pins/fpga|cpu$rs2_valid.
-logic FpgaPins_Fpga_CPU_rs2_valid_a1;
+logic FpgaPins_Fpga_CPU_rs2_valid_a1,
+      FpgaPins_Fpga_CPU_rs2_valid_a2;
 
 // For /fpga_pins/fpga|cpu$sltu_result.
-logic [31:0] FpgaPins_Fpga_CPU_sltu_result_a1;
+logic [31:0] FpgaPins_Fpga_CPU_sltu_result_a3;
 
 // For /fpga_pins/fpga|cpu$sra_result.
-logic [63:0] FpgaPins_Fpga_CPU_sra_result_a1;
+logic [63:0] FpgaPins_Fpga_CPU_sra_result_a3;
 
 // For /fpga_pins/fpga|cpu$src1_value.
-logic [31:0] FpgaPins_Fpga_CPU_src1_value_a1;
+logic [31:0] FpgaPins_Fpga_CPU_src1_value_a2;
 
 // For /fpga_pins/fpga|cpu$src2_value.
-logic [31:0] FpgaPins_Fpga_CPU_src2_value_a1;
+logic [31:0] FpgaPins_Fpga_CPU_src2_value_a2,
+             FpgaPins_Fpga_CPU_src2_value_a3,
+             FpgaPins_Fpga_CPU_src2_value_a4;
 
 // For /fpga_pins/fpga|cpu$tgt_pc.
-logic [31:0] FpgaPins_Fpga_CPU_tgt_pc_a1;
+logic [31:0] FpgaPins_Fpga_CPU_tgt_pc_a3;
 
 // For /fpga_pins/fpga|cpu$tgt_pc_op1.
-logic [31:0] FpgaPins_Fpga_CPU_tgt_pc_op1_a1;
+logic [31:0] FpgaPins_Fpga_CPU_tgt_pc_op1_a2,
+             FpgaPins_Fpga_CPU_tgt_pc_op1_a3;
 
 // For /fpga_pins/fpga|cpu$tgt_pc_op2.
-logic [31:0] FpgaPins_Fpga_CPU_tgt_pc_op2_a1;
+logic [31:0] FpgaPins_Fpga_CPU_tgt_pc_op2_a2,
+             FpgaPins_Fpga_CPU_tgt_pc_op2_a3;
 
 // For /fpga_pins/fpga|cpu$valid.
-logic FpgaPins_Fpga_CPU_valid_a1;
+logic FpgaPins_Fpga_CPU_valid_a3;
 
 // For /fpga_pins/fpga|cpu$valid_jump.
-logic FpgaPins_Fpga_CPU_valid_jump_a1;
+logic FpgaPins_Fpga_CPU_valid_jump_a3,
+      FpgaPins_Fpga_CPU_valid_jump_a4,
+      FpgaPins_Fpga_CPU_valid_jump_a5;
 
 // For /fpga_pins/fpga|cpu$valid_load.
-logic FpgaPins_Fpga_CPU_valid_load_a1;
+logic FpgaPins_Fpga_CPU_valid_load_a3,
+      FpgaPins_Fpga_CPU_valid_load_a4,
+      FpgaPins_Fpga_CPU_valid_load_a5;
 
 // For /fpga_pins/fpga|cpu$valid_store.
-logic FpgaPins_Fpga_CPU_valid_store_a1;
+logic FpgaPins_Fpga_CPU_valid_store_a3,
+      FpgaPins_Fpga_CPU_valid_store_a4;
 
 // For /fpga_pins/fpga|cpu$valid_taken_br.
-logic FpgaPins_Fpga_CPU_valid_taken_br_a1;
+logic FpgaPins_Fpga_CPU_valid_taken_br_a3,
+      FpgaPins_Fpga_CPU_valid_taken_br_a4,
+      FpgaPins_Fpga_CPU_valid_taken_br_a5;
 
 // For /fpga_pins/fpga|cpu$valid_tgt_pc.
-logic FpgaPins_Fpga_CPU_valid_tgt_pc_a1;
+logic FpgaPins_Fpga_CPU_valid_tgt_pc_a3;
 
 // For /fpga_pins/fpga|cpu/xreg$value.
-logic [31:0] FpgaPins_Fpga_CPU_Xreg_value_a1 [15:0],
-             FpgaPins_Fpga_CPU_Xreg_value_a2 [15:0];
+logic [31:0] FpgaPins_Fpga_CPU_Xreg_value_a3 [15:0],
+             FpgaPins_Fpga_CPU_Xreg_value_a4 [15:0];
 
 
 
@@ -439,12 +514,175 @@ logic [31:0] FpgaPins_Fpga_CPU_Xreg_value_a1 [15:0],
          // Scope: |cpu
          //
 
+            // Staging of $alu_op1.
+            always_ff @(posedge clk) FpgaPins_Fpga_CPU_alu_op1_a3[31:0] <= FpgaPins_Fpga_CPU_alu_op1_a2[31:0];
+
+            // Staging of $alu_op2.
+            always_ff @(posedge clk) FpgaPins_Fpga_CPU_alu_op2_a3[31:0] <= FpgaPins_Fpga_CPU_alu_op2_a2[31:0];
+
+            // Staging of $imm.
+            always_ff @(posedge clk) FpgaPins_Fpga_CPU_imm_a2[31:0] <= FpgaPins_Fpga_CPU_imm_a1[31:0];
+
+            // Staging of $inc_pc.
+            always_ff @(posedge clk) FpgaPins_Fpga_CPU_inc_pc_a2[31:0] <= FpgaPins_Fpga_CPU_inc_pc_a1[31:0];
+            always_ff @(posedge clk) FpgaPins_Fpga_CPU_inc_pc_a3[31:0] <= FpgaPins_Fpga_CPU_inc_pc_a2[31:0];
+
+            // Staging of $instr.
+            always_ff @(posedge clk) FpgaPins_Fpga_CPU_instr_a1[31:0] <= FpgaPins_Fpga_CPU_instr_a0[31:0];
+
+            // Staging of $is_add_op.
+            always_ff @(posedge clk) FpgaPins_Fpga_CPU_is_add_op_a2 <= FpgaPins_Fpga_CPU_is_add_op_a1;
+            always_ff @(posedge clk) FpgaPins_Fpga_CPU_is_add_op_a3 <= FpgaPins_Fpga_CPU_is_add_op_a2;
+
+            // Staging of $is_and_op.
+            always_ff @(posedge clk) FpgaPins_Fpga_CPU_is_and_op_a2 <= FpgaPins_Fpga_CPU_is_and_op_a1;
+            always_ff @(posedge clk) FpgaPins_Fpga_CPU_is_and_op_a3 <= FpgaPins_Fpga_CPU_is_and_op_a2;
+
+            // Staging of $is_auipc.
+            always_ff @(posedge clk) FpgaPins_Fpga_CPU_is_auipc_a2 <= FpgaPins_Fpga_CPU_is_auipc_a1;
+
+            // Staging of $is_b_instr.
+            always_ff @(posedge clk) FpgaPins_Fpga_CPU_is_b_instr_a2 <= FpgaPins_Fpga_CPU_is_b_instr_a1;
+
+            // Staging of $is_beq.
+            always_ff @(posedge clk) FpgaPins_Fpga_CPU_is_beq_a2 <= FpgaPins_Fpga_CPU_is_beq_a1;
+            always_ff @(posedge clk) FpgaPins_Fpga_CPU_is_beq_a3 <= FpgaPins_Fpga_CPU_is_beq_a2;
+
+            // Staging of $is_bge.
+            always_ff @(posedge clk) FpgaPins_Fpga_CPU_is_bge_a2 <= FpgaPins_Fpga_CPU_is_bge_a1;
+            always_ff @(posedge clk) FpgaPins_Fpga_CPU_is_bge_a3 <= FpgaPins_Fpga_CPU_is_bge_a2;
+
+            // Staging of $is_bgeu.
+            always_ff @(posedge clk) FpgaPins_Fpga_CPU_is_bgeu_a2 <= FpgaPins_Fpga_CPU_is_bgeu_a1;
+            always_ff @(posedge clk) FpgaPins_Fpga_CPU_is_bgeu_a3 <= FpgaPins_Fpga_CPU_is_bgeu_a2;
+
+            // Staging of $is_blt.
+            always_ff @(posedge clk) FpgaPins_Fpga_CPU_is_blt_a2 <= FpgaPins_Fpga_CPU_is_blt_a1;
+            always_ff @(posedge clk) FpgaPins_Fpga_CPU_is_blt_a3 <= FpgaPins_Fpga_CPU_is_blt_a2;
+
+            // Staging of $is_bltu.
+            always_ff @(posedge clk) FpgaPins_Fpga_CPU_is_bltu_a2 <= FpgaPins_Fpga_CPU_is_bltu_a1;
+            always_ff @(posedge clk) FpgaPins_Fpga_CPU_is_bltu_a3 <= FpgaPins_Fpga_CPU_is_bltu_a2;
+
+            // Staging of $is_bne.
+            always_ff @(posedge clk) FpgaPins_Fpga_CPU_is_bne_a2 <= FpgaPins_Fpga_CPU_is_bne_a1;
+            always_ff @(posedge clk) FpgaPins_Fpga_CPU_is_bne_a3 <= FpgaPins_Fpga_CPU_is_bne_a2;
+
+            // Staging of $is_jalr.
+            always_ff @(posedge clk) FpgaPins_Fpga_CPU_is_jalr_a2 <= FpgaPins_Fpga_CPU_is_jalr_a1;
+
+            // Staging of $is_jump.
+            always_ff @(posedge clk) FpgaPins_Fpga_CPU_is_jump_a2 <= FpgaPins_Fpga_CPU_is_jump_a1;
+            always_ff @(posedge clk) FpgaPins_Fpga_CPU_is_jump_a3 <= FpgaPins_Fpga_CPU_is_jump_a2;
+
+            // Staging of $is_load.
+            always_ff @(posedge clk) FpgaPins_Fpga_CPU_is_load_a2 <= FpgaPins_Fpga_CPU_is_load_a1;
+            always_ff @(posedge clk) FpgaPins_Fpga_CPU_is_load_a3 <= FpgaPins_Fpga_CPU_is_load_a2;
+
+            // Staging of $is_lui.
+            always_ff @(posedge clk) FpgaPins_Fpga_CPU_is_lui_a2 <= FpgaPins_Fpga_CPU_is_lui_a1;
+            always_ff @(posedge clk) FpgaPins_Fpga_CPU_is_lui_a3 <= FpgaPins_Fpga_CPU_is_lui_a2;
+
+            // Staging of $is_or_op.
+            always_ff @(posedge clk) FpgaPins_Fpga_CPU_is_or_op_a2 <= FpgaPins_Fpga_CPU_is_or_op_a1;
+            always_ff @(posedge clk) FpgaPins_Fpga_CPU_is_or_op_a3 <= FpgaPins_Fpga_CPU_is_or_op_a2;
+
+            // Staging of $is_r_instr.
+            always_ff @(posedge clk) FpgaPins_Fpga_CPU_is_r_instr_a2 <= FpgaPins_Fpga_CPU_is_r_instr_a1;
+
+            // Staging of $is_sll_op.
+            always_ff @(posedge clk) FpgaPins_Fpga_CPU_is_sll_op_a2 <= FpgaPins_Fpga_CPU_is_sll_op_a1;
+            always_ff @(posedge clk) FpgaPins_Fpga_CPU_is_sll_op_a3 <= FpgaPins_Fpga_CPU_is_sll_op_a2;
+
+            // Staging of $is_slt_op.
+            always_ff @(posedge clk) FpgaPins_Fpga_CPU_is_slt_op_a2 <= FpgaPins_Fpga_CPU_is_slt_op_a1;
+            always_ff @(posedge clk) FpgaPins_Fpga_CPU_is_slt_op_a3 <= FpgaPins_Fpga_CPU_is_slt_op_a2;
+
+            // Staging of $is_sltu_op.
+            always_ff @(posedge clk) FpgaPins_Fpga_CPU_is_sltu_op_a2 <= FpgaPins_Fpga_CPU_is_sltu_op_a1;
+            always_ff @(posedge clk) FpgaPins_Fpga_CPU_is_sltu_op_a3 <= FpgaPins_Fpga_CPU_is_sltu_op_a2;
+
+            // Staging of $is_sra_op.
+            always_ff @(posedge clk) FpgaPins_Fpga_CPU_is_sra_op_a2 <= FpgaPins_Fpga_CPU_is_sra_op_a1;
+            always_ff @(posedge clk) FpgaPins_Fpga_CPU_is_sra_op_a3 <= FpgaPins_Fpga_CPU_is_sra_op_a2;
+
+            // Staging of $is_srl_op.
+            always_ff @(posedge clk) FpgaPins_Fpga_CPU_is_srl_op_a2 <= FpgaPins_Fpga_CPU_is_srl_op_a1;
+            always_ff @(posedge clk) FpgaPins_Fpga_CPU_is_srl_op_a3 <= FpgaPins_Fpga_CPU_is_srl_op_a2;
+
+            // Staging of $is_store.
+            always_ff @(posedge clk) FpgaPins_Fpga_CPU_is_store_a2 <= FpgaPins_Fpga_CPU_is_store_a1;
+            always_ff @(posedge clk) FpgaPins_Fpga_CPU_is_store_a3 <= FpgaPins_Fpga_CPU_is_store_a2;
+
+            // Staging of $is_sub.
+            always_ff @(posedge clk) FpgaPins_Fpga_CPU_is_sub_a2 <= FpgaPins_Fpga_CPU_is_sub_a1;
+            always_ff @(posedge clk) FpgaPins_Fpga_CPU_is_sub_a3 <= FpgaPins_Fpga_CPU_is_sub_a2;
+
+            // Staging of $is_xor_op.
+            always_ff @(posedge clk) FpgaPins_Fpga_CPU_is_xor_op_a2 <= FpgaPins_Fpga_CPU_is_xor_op_a1;
+            always_ff @(posedge clk) FpgaPins_Fpga_CPU_is_xor_op_a3 <= FpgaPins_Fpga_CPU_is_xor_op_a2;
+
+            // Staging of $ld_data.
+            always_ff @(posedge clk) FpgaPins_Fpga_CPU_ld_data_a5[31:0] <= FpgaPins_Fpga_CPU_ld_data_a4[31:0];
+
             // Staging of $pc.
             always_ff @(posedge clk) FpgaPins_Fpga_CPU_pc_a1[31:0] <= FpgaPins_Fpga_CPU_pc_a0[31:0];
+            always_ff @(posedge clk) FpgaPins_Fpga_CPU_pc_a2[31:0] <= FpgaPins_Fpga_CPU_pc_a1[31:0];
+
+            // Staging of $rd.
+            always_ff @(posedge clk) FpgaPins_Fpga_CPU_rd_a2[4:0] <= FpgaPins_Fpga_CPU_rd_a1[4:0];
+            always_ff @(posedge clk) FpgaPins_Fpga_CPU_rd_a3[4:0] <= FpgaPins_Fpga_CPU_rd_a2[4:0];
+            always_ff @(posedge clk) FpgaPins_Fpga_CPU_rd_a4[4:0] <= FpgaPins_Fpga_CPU_rd_a3[4:0];
+            always_ff @(posedge clk) FpgaPins_Fpga_CPU_rd_a5[4:0] <= FpgaPins_Fpga_CPU_rd_a4[4:0];
+
+            // Staging of $rd_valid.
+            always_ff @(posedge clk) FpgaPins_Fpga_CPU_rd_valid_a2 <= FpgaPins_Fpga_CPU_rd_valid_a1;
+            always_ff @(posedge clk) FpgaPins_Fpga_CPU_rd_valid_a3 <= FpgaPins_Fpga_CPU_rd_valid_a2;
 
             // Staging of $reset.
             always_ff @(posedge clk) FpgaPins_Fpga_CPU_reset_a1 <= FpgaPins_Fpga_CPU_reset_a0;
             always_ff @(posedge clk) FpgaPins_Fpga_CPU_reset_a2 <= FpgaPins_Fpga_CPU_reset_a1;
+            always_ff @(posedge clk) FpgaPins_Fpga_CPU_reset_a3 <= FpgaPins_Fpga_CPU_reset_a2;
+
+            // Staging of $result.
+            always_ff @(posedge clk) FpgaPins_Fpga_CPU_result_a4[31:2] <= FpgaPins_Fpga_CPU_result_a3[31:2];
+
+            // Staging of $rs1.
+            always_ff @(posedge clk) FpgaPins_Fpga_CPU_rs1_a2[4:0] <= FpgaPins_Fpga_CPU_rs1_a1[4:0];
+
+            // Staging of $rs1_valid.
+            always_ff @(posedge clk) FpgaPins_Fpga_CPU_rs1_valid_a2 <= FpgaPins_Fpga_CPU_rs1_valid_a1;
+
+            // Staging of $rs2.
+            always_ff @(posedge clk) FpgaPins_Fpga_CPU_rs2_a2[4:0] <= FpgaPins_Fpga_CPU_rs2_a1[4:0];
+
+            // Staging of $rs2_valid.
+            always_ff @(posedge clk) FpgaPins_Fpga_CPU_rs2_valid_a2 <= FpgaPins_Fpga_CPU_rs2_valid_a1;
+
+            // Staging of $src2_value.
+            always_ff @(posedge clk) FpgaPins_Fpga_CPU_src2_value_a3[31:0] <= FpgaPins_Fpga_CPU_src2_value_a2[31:0];
+            always_ff @(posedge clk) FpgaPins_Fpga_CPU_src2_value_a4[31:0] <= FpgaPins_Fpga_CPU_src2_value_a3[31:0];
+
+            // Staging of $tgt_pc_op1.
+            always_ff @(posedge clk) FpgaPins_Fpga_CPU_tgt_pc_op1_a3[31:0] <= FpgaPins_Fpga_CPU_tgt_pc_op1_a2[31:0];
+
+            // Staging of $tgt_pc_op2.
+            always_ff @(posedge clk) FpgaPins_Fpga_CPU_tgt_pc_op2_a3[31:0] <= FpgaPins_Fpga_CPU_tgt_pc_op2_a2[31:0];
+
+            // Staging of $valid_jump.
+            always_ff @(posedge clk) FpgaPins_Fpga_CPU_valid_jump_a4 <= FpgaPins_Fpga_CPU_valid_jump_a3;
+            always_ff @(posedge clk) FpgaPins_Fpga_CPU_valid_jump_a5 <= FpgaPins_Fpga_CPU_valid_jump_a4;
+
+            // Staging of $valid_load.
+            always_ff @(posedge clk) FpgaPins_Fpga_CPU_valid_load_a4 <= FpgaPins_Fpga_CPU_valid_load_a3;
+            always_ff @(posedge clk) FpgaPins_Fpga_CPU_valid_load_a5 <= FpgaPins_Fpga_CPU_valid_load_a4;
+
+            // Staging of $valid_store.
+            always_ff @(posedge clk) FpgaPins_Fpga_CPU_valid_store_a4 <= FpgaPins_Fpga_CPU_valid_store_a3;
+
+            // Staging of $valid_taken_br.
+            always_ff @(posedge clk) FpgaPins_Fpga_CPU_valid_taken_br_a4 <= FpgaPins_Fpga_CPU_valid_taken_br_a3;
+            always_ff @(posedge clk) FpgaPins_Fpga_CPU_valid_taken_br_a5 <= FpgaPins_Fpga_CPU_valid_taken_br_a4;
 
 
             //
@@ -452,7 +690,7 @@ logic [31:0] FpgaPins_Fpga_CPU_Xreg_value_a1 [15:0],
             //
             for (xreg = 0; xreg <= 15; xreg++) begin : L1gen_FpgaPins_Fpga_CPU_Xreg
                // Staging of $value.
-               always_ff @(posedge clk) FpgaPins_Fpga_CPU_Xreg_value_a2[xreg][31:0] <= FpgaPins_Fpga_CPU_Xreg_value_a1[xreg][31:0];
+               always_ff @(posedge clk) FpgaPins_Fpga_CPU_Xreg_value_a4[xreg][31:0] <= FpgaPins_Fpga_CPU_Xreg_value_a3[xreg][31:0];
 
             end
 
@@ -505,10 +743,10 @@ logic [31:0] FpgaPins_Fpga_CPU_Xreg_value_a1 [15:0],
             // Scope: |cpu
             //
             if (1) begin : P_cpu
-               (* keep *) logic [31:0] \///@1$alu_op1 ;
-               assign \///@1$alu_op1 = FpgaPins_Fpga_CPU_alu_op1_a1;
-               (* keep *) logic [31:0] \///@1$alu_op2 ;
-               assign \///@1$alu_op2 = FpgaPins_Fpga_CPU_alu_op2_a1;
+               (* keep *) logic [31:0] \///@2$alu_op1 ;
+               assign \///@2$alu_op1 = FpgaPins_Fpga_CPU_alu_op1_a2;
+               (* keep *) logic [31:0] \///@2$alu_op2 ;
+               assign \///@2$alu_op2 = FpgaPins_Fpga_CPU_alu_op2_a2;
                (* keep *) logic [2:0] \///@1$funct3 ;
                assign \///@1$funct3 = FpgaPins_Fpga_CPU_funct3_a1;
                (* keep *) logic [6:0] \///@1$funct7 ;
@@ -517,8 +755,8 @@ logic [31:0] FpgaPins_Fpga_CPU_Xreg_value_a1 [15:0],
                assign \///@1$imm = FpgaPins_Fpga_CPU_imm_a1;
                (* keep *) logic [31:0] \///@1$inc_pc ;
                assign \///@1$inc_pc = FpgaPins_Fpga_CPU_inc_pc_a1;
-               (* keep *) logic [31:0] \///@1$instr ;
-               assign \///@1$instr = FpgaPins_Fpga_CPU_instr_a1;
+               (* keep *) logic [31:0] \///@0$instr ;
+               assign \///@0$instr = FpgaPins_Fpga_CPU_instr_a0;
                (* keep *) logic  \///@1$is_add ;
                assign \///@1$is_add = FpgaPins_Fpga_CPU_is_add_a1;
                (* keep *) logic  \///@1$is_add_op ;
@@ -629,8 +867,8 @@ logic [31:0] FpgaPins_Fpga_CPU_Xreg_value_a1 [15:0],
                assign \///@1$is_xor_op = FpgaPins_Fpga_CPU_is_xor_op_a1;
                (* keep *) logic  \///@1$is_xori ;
                assign \///@1$is_xori = FpgaPins_Fpga_CPU_is_xori_a1;
-               (* keep *) logic [31:0] \///@1$ld_data ;
-               assign \///@1$ld_data = FpgaPins_Fpga_CPU_ld_data_a1;
+               (* keep *) logic [31:0] \///@4$ld_data ;
+               assign \///@4$ld_data = FpgaPins_Fpga_CPU_ld_data_a4;
                (* keep *) logic [6:0] \///@1$opcode ;
                assign \///@1$opcode = FpgaPins_Fpga_CPU_opcode_a1;
                (* keep *) logic [31:0] \///@0$pc ;
@@ -641,26 +879,26 @@ logic [31:0] FpgaPins_Fpga_CPU_Xreg_value_a1 [15:0],
                assign \///@1$rd_valid = FpgaPins_Fpga_CPU_rd_valid_a1;
                (* keep *) logic  \///@0$reset ;
                assign \///@0$reset = FpgaPins_Fpga_CPU_reset_a0;
-               (* keep *) logic [31:0] \///@1$result ;
-               assign \///@1$result = FpgaPins_Fpga_CPU_result_a1;
-               (* keep *) logic [31:0] \///?$rf_rd_en1@1$rf_rd_data1 ;
-               assign \///?$rf_rd_en1@1$rf_rd_data1 = FpgaPins_Fpga_CPU_rf_rd_data1_a1;
-               (* keep *) logic [31:0] \///?$rf_rd_en2@1$rf_rd_data2 ;
-               assign \///?$rf_rd_en2@1$rf_rd_data2 = FpgaPins_Fpga_CPU_rf_rd_data2_a1;
-               (* keep *) logic  \///@1$rf_rd_en1 ;
-               assign \///@1$rf_rd_en1 = FpgaPins_Fpga_CPU_rf_rd_en1_a1;
-               (* keep *) logic  \///@1$rf_rd_en2 ;
-               assign \///@1$rf_rd_en2 = FpgaPins_Fpga_CPU_rf_rd_en2_a1;
-               (* keep *) logic [4:0] \///@1$rf_rd_index1 ;
-               assign \///@1$rf_rd_index1 = FpgaPins_Fpga_CPU_rf_rd_index1_a1;
-               (* keep *) logic [4:0] \///@1$rf_rd_index2 ;
-               assign \///@1$rf_rd_index2 = FpgaPins_Fpga_CPU_rf_rd_index2_a1;
-               (* keep *) logic [31:0] \///@1$rf_wr_data ;
-               assign \///@1$rf_wr_data = FpgaPins_Fpga_CPU_rf_wr_data_a1;
-               (* keep *) logic  \///@1$rf_wr_en ;
-               assign \///@1$rf_wr_en = FpgaPins_Fpga_CPU_rf_wr_en_a1;
-               (* keep *) logic [4:0] \///@1$rf_wr_index ;
-               assign \///@1$rf_wr_index = FpgaPins_Fpga_CPU_rf_wr_index_a1;
+               (* keep *) logic [31:0] \///@3$result ;
+               assign \///@3$result = FpgaPins_Fpga_CPU_result_a3;
+               (* keep *) logic [31:0] \///?$rf_rd_en1@2$rf_rd_data1 ;
+               assign \///?$rf_rd_en1@2$rf_rd_data1 = FpgaPins_Fpga_CPU_rf_rd_data1_a2;
+               (* keep *) logic [31:0] \///?$rf_rd_en2@2$rf_rd_data2 ;
+               assign \///?$rf_rd_en2@2$rf_rd_data2 = FpgaPins_Fpga_CPU_rf_rd_data2_a2;
+               (* keep *) logic  \///@2$rf_rd_en1 ;
+               assign \///@2$rf_rd_en1 = FpgaPins_Fpga_CPU_rf_rd_en1_a2;
+               (* keep *) logic  \///@2$rf_rd_en2 ;
+               assign \///@2$rf_rd_en2 = FpgaPins_Fpga_CPU_rf_rd_en2_a2;
+               (* keep *) logic [4:0] \///@2$rf_rd_index1 ;
+               assign \///@2$rf_rd_index1 = FpgaPins_Fpga_CPU_rf_rd_index1_a2;
+               (* keep *) logic [4:0] \///@2$rf_rd_index2 ;
+               assign \///@2$rf_rd_index2 = FpgaPins_Fpga_CPU_rf_rd_index2_a2;
+               (* keep *) logic [31:0] \///@3$rf_wr_data ;
+               assign \///@3$rf_wr_data = FpgaPins_Fpga_CPU_rf_wr_data_a3;
+               (* keep *) logic  \///@3$rf_wr_en ;
+               assign \///@3$rf_wr_en = FpgaPins_Fpga_CPU_rf_wr_en_a3;
+               (* keep *) logic [4:0] \///@3$rf_wr_index ;
+               assign \///@3$rf_wr_index = FpgaPins_Fpga_CPU_rf_wr_index_a3;
                (* keep *) logic [4:0] \///@1$rs1 ;
                assign \///@1$rs1 = FpgaPins_Fpga_CPU_rs1_a1;
                (* keep *) logic  \///@1$rs1_valid ;
@@ -669,41 +907,41 @@ logic [31:0] FpgaPins_Fpga_CPU_Xreg_value_a1 [15:0],
                assign \///@1$rs2 = FpgaPins_Fpga_CPU_rs2_a1;
                (* keep *) logic  \///@1$rs2_valid ;
                assign \///@1$rs2_valid = FpgaPins_Fpga_CPU_rs2_valid_a1;
-               (* keep *) logic [31:0] \///@1$sltu_result ;
-               assign \///@1$sltu_result = FpgaPins_Fpga_CPU_sltu_result_a1;
-               (* keep *) logic [63:0] \///@1$sra_result ;
-               assign \///@1$sra_result = FpgaPins_Fpga_CPU_sra_result_a1;
-               (* keep *) logic [31:0] \///@1$src1_value ;
-               assign \///@1$src1_value = FpgaPins_Fpga_CPU_src1_value_a1;
-               (* keep *) logic [31:0] \///@1$src2_value ;
-               assign \///@1$src2_value = FpgaPins_Fpga_CPU_src2_value_a1;
-               (* keep *) logic [31:0] \///@1$tgt_pc ;
-               assign \///@1$tgt_pc = FpgaPins_Fpga_CPU_tgt_pc_a1;
-               (* keep *) logic [31:0] \///@1$tgt_pc_op1 ;
-               assign \///@1$tgt_pc_op1 = FpgaPins_Fpga_CPU_tgt_pc_op1_a1;
-               (* keep *) logic [31:0] \///@1$tgt_pc_op2 ;
-               assign \///@1$tgt_pc_op2 = FpgaPins_Fpga_CPU_tgt_pc_op2_a1;
-               (* keep *) logic  \///@1$valid ;
-               assign \///@1$valid = FpgaPins_Fpga_CPU_valid_a1;
-               (* keep *) logic  \///@1$valid_jump ;
-               assign \///@1$valid_jump = FpgaPins_Fpga_CPU_valid_jump_a1;
-               (* keep *) logic  \///@1$valid_load ;
-               assign \///@1$valid_load = FpgaPins_Fpga_CPU_valid_load_a1;
-               (* keep *) logic  \///@1$valid_store ;
-               assign \///@1$valid_store = FpgaPins_Fpga_CPU_valid_store_a1;
-               (* keep *) logic  \///@1$valid_taken_br ;
-               assign \///@1$valid_taken_br = FpgaPins_Fpga_CPU_valid_taken_br_a1;
-               (* keep *) logic  \///@1$valid_tgt_pc ;
-               assign \///@1$valid_tgt_pc = FpgaPins_Fpga_CPU_valid_tgt_pc_a1;
+               (* keep *) logic [31:0] \///@3$sltu_result ;
+               assign \///@3$sltu_result = FpgaPins_Fpga_CPU_sltu_result_a3;
+               (* keep *) logic [63:0] \///@3$sra_result ;
+               assign \///@3$sra_result = FpgaPins_Fpga_CPU_sra_result_a3;
+               (* keep *) logic [31:0] \///@2$src1_value ;
+               assign \///@2$src1_value = FpgaPins_Fpga_CPU_src1_value_a2;
+               (* keep *) logic [31:0] \///@2$src2_value ;
+               assign \///@2$src2_value = FpgaPins_Fpga_CPU_src2_value_a2;
+               (* keep *) logic [31:0] \///@3$tgt_pc ;
+               assign \///@3$tgt_pc = FpgaPins_Fpga_CPU_tgt_pc_a3;
+               (* keep *) logic [31:0] \///@2$tgt_pc_op1 ;
+               assign \///@2$tgt_pc_op1 = FpgaPins_Fpga_CPU_tgt_pc_op1_a2;
+               (* keep *) logic [31:0] \///@2$tgt_pc_op2 ;
+               assign \///@2$tgt_pc_op2 = FpgaPins_Fpga_CPU_tgt_pc_op2_a2;
+               (* keep *) logic  \///@3$valid ;
+               assign \///@3$valid = FpgaPins_Fpga_CPU_valid_a3;
+               (* keep *) logic  \///@3$valid_jump ;
+               assign \///@3$valid_jump = FpgaPins_Fpga_CPU_valid_jump_a3;
+               (* keep *) logic  \///@3$valid_load ;
+               assign \///@3$valid_load = FpgaPins_Fpga_CPU_valid_load_a3;
+               (* keep *) logic  \///@3$valid_store ;
+               assign \///@3$valid_store = FpgaPins_Fpga_CPU_valid_store_a3;
+               (* keep *) logic  \///@3$valid_taken_br ;
+               assign \///@3$valid_taken_br = FpgaPins_Fpga_CPU_valid_taken_br_a3;
+               (* keep *) logic  \///@3$valid_tgt_pc ;
+               assign \///@3$valid_tgt_pc = FpgaPins_Fpga_CPU_valid_tgt_pc_a3;
 
                //
                // Scope: /xreg[15:0]
                //
                for (xreg = 0; xreg <= 15; xreg++) begin : \/xreg 
-                  (* keep *) logic [31:0] \////@1$value ;
-                  assign \////@1$value = FpgaPins_Fpga_CPU_Xreg_value_a1[xreg];
-                  (* keep *) logic  \////@1$wr ;
-                  assign \////@1$wr = L1_FpgaPins_Fpga_CPU_Xreg[xreg].L1_wr_a1;
+                  (* keep *) logic [31:0] \////@3$value ;
+                  assign \////@3$value = FpgaPins_Fpga_CPU_Xreg_value_a3[xreg];
+                  (* keep *) logic  \////@3$wr ;
+                  assign \////@3$wr = L1_FpgaPins_Fpga_CPU_Xreg[xreg].L1_wr_a3;
                end
             end
          end
@@ -724,7 +962,7 @@ logic [31:0] FpgaPins_Fpga_CPU_Xreg_value_a1 [15:0],
 //_\TLV
    /* verilator lint_off UNOPTFLAT */
    // Connect Tiny Tapeout I/Os to Virtual FPGA Lab.
-   //_\source /raw.githubusercontent.com/osfpga/VirtualFPGALab/35e36bd144fddd75495d4cbc01c4fc50ac5bde6f/tlvlib/tinytapeoutlib.tlv 76   // Instantiated from top.tlv, 410 as: m5+tt_connections()
+   //_\source /raw.githubusercontent.com/osfpga/VirtualFPGALab/35e36bd144fddd75495d4cbc01c4fc50ac5bde6f/tlvlib/tinytapeoutlib.tlv 76   // Instantiated from top.tlv, 384 as: m5+tt_connections()
       assign L0_slideswitch_a0[7:0] = ui_in;
       assign L0_sseg_segment_n_a0[6:0] = ~ uo_out[6:0];
       assign L0_sseg_decimal_point_n_a0 = ~ uo_out[7];
@@ -732,7 +970,7 @@ logic [31:0] FpgaPins_Fpga_CPU_Xreg_value_a1 [15:0],
    //_\end_source
 
    // Instantiate the Virtual FPGA Lab.
-   //_\source /raw.githubusercontent.com/osfpga/VirtualFPGALab/a069f1e4e19adc829b53237b3e0b5d6763dc3194/tlvlib/fpgaincludes.tlv 307   // Instantiated from top.tlv, 413 as: m5+board(/top, /fpga, 7, $, , cpu)
+   //_\source /raw.githubusercontent.com/osfpga/VirtualFPGALab/a069f1e4e19adc829b53237b3e0b5d6763dc3194/tlvlib/fpgaincludes.tlv 307   // Instantiated from top.tlv, 387 as: m5+board(/top, /fpga, 7, $, , cpu)
       
       //_\source /raw.githubusercontent.com/osfpga/VirtualFPGALab/a069f1e4e19adc829b53237b3e0b5d6763dc3194/tlvlib/fpgaincludes.tlv 355   // Instantiated from /raw.githubusercontent.com/osfpga/VirtualFPGALab/a069f1e4e19adc829b53237b3e0b5d6763dc3194/tlvlib/fpgaincludes.tlv, 309 as: m4+thanks(m5__l(309)m5_eval(m5_get(BOARD_THANKS_ARGS)))
          //_/thanks
@@ -768,23 +1006,23 @@ logic [31:0] FpgaPins_Fpga_CPU_Xreg_value_a1 [15:0],
                //_\end_source
                
                //_|cpu
-                  //_@0
+                  //_@0 // Instruction Fetch, PC Select
                      assign FpgaPins_Fpga_CPU_reset_a0 = reset;
                      assign FpgaPins_Fpga_CPU_pc_a0[31:0] =
                         FpgaPins_Fpga_CPU_reset_a0             ? 32'h0000_0000 :
                         FpgaPins_Fpga_CPU_reset_a1          ? 32'h0000_0000 :
-                        FpgaPins_Fpga_CPU_valid_tgt_pc_a1   ? FpgaPins_Fpga_CPU_tgt_pc_a1 :
+                        FpgaPins_Fpga_CPU_valid_tgt_pc_a3   ? FpgaPins_Fpga_CPU_tgt_pc_a3 :
+                        FpgaPins_Fpga_CPU_valid_load_a3     ? FpgaPins_Fpga_CPU_inc_pc_a3 :
                                              FpgaPins_Fpga_CPU_inc_pc_a1;
-                  //_@1
-                     // Increment PC
+                     assign imem_rd_en = ! (FpgaPins_Fpga_CPU_reset_a0 || FpgaPins_Fpga_CPU_reset_a1);
+                     assign imem_rd_addr = FpgaPins_Fpga_CPU_pc_a0[IMEM_BYTE_ADDR_WIDTH-1:2];
+                     assign FpgaPins_Fpga_CPU_instr_a0[31:0] = imem_rd_data[31:0];
+            
+                  //_@1 // Instruction Decode, PC Increment
                      assign FpgaPins_Fpga_CPU_inc_pc_a1[31:0] = FpgaPins_Fpga_CPU_pc_a1 + 32'h4;
             
-                     // Instruction Fetch
-                     assign imem_rd_en = ! (FpgaPins_Fpga_CPU_reset_a1 || FpgaPins_Fpga_CPU_reset_a2);
-                     assign imem_rd_addr = FpgaPins_Fpga_CPU_pc_a1[IMEM_BYTE_ADDR_WIDTH-1:2];
-                     assign FpgaPins_Fpga_CPU_instr_a1[31:0] = imem_rd_data[31:0];
-            
                      // Instruction Fields
+                     // $instr[31:0] = *imem_rd_data;
                      assign FpgaPins_Fpga_CPU_opcode_a1[6:0] = FpgaPins_Fpga_CPU_instr_a1[6:0];
                      assign FpgaPins_Fpga_CPU_funct3_a1[2:0] = FpgaPins_Fpga_CPU_instr_a1[14:12];
                      assign FpgaPins_Fpga_CPU_funct7_a1[6:0] = FpgaPins_Fpga_CPU_instr_a1[31:25];
@@ -865,100 +1103,74 @@ logic [31:0] FpgaPins_Fpga_CPU_Xreg_value_a1 [15:0],
                      assign FpgaPins_Fpga_CPU_rs1_valid_a1   = !FpgaPins_Fpga_CPU_reset_a1 & (FpgaPins_Fpga_CPU_is_r_instr_a1 | FpgaPins_Fpga_CPU_is_i_instr_a1 | FpgaPins_Fpga_CPU_is_s_instr_a1 | FpgaPins_Fpga_CPU_is_b_instr_a1);
                      assign FpgaPins_Fpga_CPU_rs2_valid_a1   = !FpgaPins_Fpga_CPU_reset_a1 & (FpgaPins_Fpga_CPU_is_r_instr_a1 | FpgaPins_Fpga_CPU_is_s_instr_a1 | FpgaPins_Fpga_CPU_is_b_instr_a1);
             
-                     // Operand Selection
-                     assign FpgaPins_Fpga_CPU_rf_rd_en1_a1 = FpgaPins_Fpga_CPU_rs1_valid_a1;
-                     assign FpgaPins_Fpga_CPU_rf_rd_en2_a1 = FpgaPins_Fpga_CPU_rs2_valid_a1;
-                     assign FpgaPins_Fpga_CPU_rf_rd_index1_a1[4:0] = FpgaPins_Fpga_CPU_rs1_a1;
-                     assign FpgaPins_Fpga_CPU_rf_rd_index2_a1[4:0] = FpgaPins_Fpga_CPU_rs2_a1;
+                  //_@2 // Operand Selection
+                     assign FpgaPins_Fpga_CPU_rf_rd_en1_a2 = FpgaPins_Fpga_CPU_rs1_valid_a2;
+                     assign FpgaPins_Fpga_CPU_rf_rd_en2_a2 = FpgaPins_Fpga_CPU_rs2_valid_a2;
+                     assign FpgaPins_Fpga_CPU_rf_rd_index1_a2[4:0] = FpgaPins_Fpga_CPU_rs1_a2;
+                     assign FpgaPins_Fpga_CPU_rf_rd_index2_a2[4:0] = FpgaPins_Fpga_CPU_rs2_a2;
             
-                     assign FpgaPins_Fpga_CPU_src1_value_a1[31:0] = FpgaPins_Fpga_CPU_rf_rd_data1_a1;
-                     assign FpgaPins_Fpga_CPU_src2_value_a1[31:0] = FpgaPins_Fpga_CPU_rf_rd_data2_a1;
+                     assign FpgaPins_Fpga_CPU_src1_value_a2[31:0] = (FpgaPins_Fpga_CPU_rf_wr_en_a3 && (FpgaPins_Fpga_CPU_rd_a3 == FpgaPins_Fpga_CPU_rs1_a2)) ? FpgaPins_Fpga_CPU_result_a3 : FpgaPins_Fpga_CPU_rf_rd_data1_a2;
+                     assign FpgaPins_Fpga_CPU_src2_value_a2[31:0] = (FpgaPins_Fpga_CPU_rf_wr_en_a3 && (FpgaPins_Fpga_CPU_rd_a3 == FpgaPins_Fpga_CPU_rs2_a2)) ? FpgaPins_Fpga_CPU_result_a3 : FpgaPins_Fpga_CPU_rf_rd_data2_a2;
             
-                     assign FpgaPins_Fpga_CPU_alu_op1_a1[31:0] =
-                        FpgaPins_Fpga_CPU_is_auipc_a1 | FpgaPins_Fpga_CPU_is_jump_a1 ? FpgaPins_Fpga_CPU_pc_a1 :
-                                               FpgaPins_Fpga_CPU_src1_value_a1;
-                     assign FpgaPins_Fpga_CPU_alu_op2_a1[31:0] =
-                        FpgaPins_Fpga_CPU_is_r_instr_a1 || FpgaPins_Fpga_CPU_is_b_instr_a1 ? FpgaPins_Fpga_CPU_src2_value_a1 :
-                        FpgaPins_Fpga_CPU_is_jump_a1                   ? 32'h0000_0004 :
-                                                     FpgaPins_Fpga_CPU_imm_a1;
+                     assign FpgaPins_Fpga_CPU_alu_op1_a2[31:0] =
+                        FpgaPins_Fpga_CPU_is_auipc_a2 | FpgaPins_Fpga_CPU_is_jump_a2 ? FpgaPins_Fpga_CPU_pc_a2 :
+                                               FpgaPins_Fpga_CPU_src1_value_a2;
+                     assign FpgaPins_Fpga_CPU_alu_op2_a2[31:0] =
+                        FpgaPins_Fpga_CPU_is_r_instr_a2 || FpgaPins_Fpga_CPU_is_b_instr_a2 ? FpgaPins_Fpga_CPU_src2_value_a2 :
+                        FpgaPins_Fpga_CPU_is_jump_a2                   ? 32'h0000_0004 :
+                                                     FpgaPins_Fpga_CPU_imm_a2;
             
-                     assign FpgaPins_Fpga_CPU_tgt_pc_op1_a1[31:0] = FpgaPins_Fpga_CPU_is_jalr_a1 ? FpgaPins_Fpga_CPU_src1_value_a1 : FpgaPins_Fpga_CPU_pc_a1;
-                     assign FpgaPins_Fpga_CPU_tgt_pc_op2_a1[31:0] = FpgaPins_Fpga_CPU_imm_a1;
+                     assign FpgaPins_Fpga_CPU_tgt_pc_op1_a2[31:0] = FpgaPins_Fpga_CPU_is_jalr_a2 ? FpgaPins_Fpga_CPU_src1_value_a2 : FpgaPins_Fpga_CPU_pc_a2;
+                     assign FpgaPins_Fpga_CPU_tgt_pc_op2_a2[31:0] = FpgaPins_Fpga_CPU_imm_a2;
             
-                     // Execute, Register Write
-                     assign FpgaPins_Fpga_CPU_valid_a1 = !FpgaPins_Fpga_CPU_reset_a1;
-                     assign FpgaPins_Fpga_CPU_valid_load_a1  = FpgaPins_Fpga_CPU_is_load_a1  && FpgaPins_Fpga_CPU_valid_a1;
-                     assign FpgaPins_Fpga_CPU_valid_store_a1 = FpgaPins_Fpga_CPU_is_store_a1 && FpgaPins_Fpga_CPU_valid_a1;
-                     assign FpgaPins_Fpga_CPU_valid_jump_a1  = FpgaPins_Fpga_CPU_is_jump_a1  && FpgaPins_Fpga_CPU_valid_a1;
-                     assign FpgaPins_Fpga_CPU_valid_taken_br_a1 =
-                        !FpgaPins_Fpga_CPU_valid_a1  ? 1'b0 :
-                        FpgaPins_Fpga_CPU_is_beq_a1  ? FpgaPins_Fpga_CPU_alu_op1_a1 == FpgaPins_Fpga_CPU_alu_op2_a1 :
-                        FpgaPins_Fpga_CPU_is_bne_a1  ? FpgaPins_Fpga_CPU_alu_op1_a1 != FpgaPins_Fpga_CPU_alu_op2_a1 :
-                        FpgaPins_Fpga_CPU_is_bltu_a1 ? FpgaPins_Fpga_CPU_result_a1[0] :
-                        FpgaPins_Fpga_CPU_is_bgeu_a1 ? !FpgaPins_Fpga_CPU_result_a1[0] :
-                        FpgaPins_Fpga_CPU_is_blt_a1  ? FpgaPins_Fpga_CPU_result_a1[0] :
-                        FpgaPins_Fpga_CPU_is_bge_a1  ? !FpgaPins_Fpga_CPU_result_a1[0] :
+                  //_@3 // Execute, Register Write
+                     assign FpgaPins_Fpga_CPU_valid_a3 = !FpgaPins_Fpga_CPU_reset_a3 && !(FpgaPins_Fpga_CPU_valid_taken_br_a4 || FpgaPins_Fpga_CPU_valid_taken_br_a5 || FpgaPins_Fpga_CPU_valid_load_a4 || FpgaPins_Fpga_CPU_valid_load_a5 || FpgaPins_Fpga_CPU_valid_jump_a4 || FpgaPins_Fpga_CPU_valid_jump_a5);
+                     assign FpgaPins_Fpga_CPU_valid_load_a3  = FpgaPins_Fpga_CPU_is_load_a3  && FpgaPins_Fpga_CPU_valid_a3;
+                     assign FpgaPins_Fpga_CPU_valid_store_a3 = FpgaPins_Fpga_CPU_is_store_a3 && FpgaPins_Fpga_CPU_valid_a3;
+                     assign FpgaPins_Fpga_CPU_valid_jump_a3  = FpgaPins_Fpga_CPU_is_jump_a3  && FpgaPins_Fpga_CPU_valid_a3;
+                     assign FpgaPins_Fpga_CPU_valid_taken_br_a3 =
+                        !FpgaPins_Fpga_CPU_valid_a3  ? 1'b0 :
+                        FpgaPins_Fpga_CPU_is_beq_a3  ? FpgaPins_Fpga_CPU_alu_op1_a3 == FpgaPins_Fpga_CPU_alu_op2_a3 :
+                        FpgaPins_Fpga_CPU_is_bne_a3  ? FpgaPins_Fpga_CPU_alu_op1_a3 != FpgaPins_Fpga_CPU_alu_op2_a3 :
+                        FpgaPins_Fpga_CPU_is_bltu_a3 ? FpgaPins_Fpga_CPU_result_a3[0] :
+                        FpgaPins_Fpga_CPU_is_bgeu_a3 ? !FpgaPins_Fpga_CPU_result_a3[0] :
+                        FpgaPins_Fpga_CPU_is_blt_a3  ? FpgaPins_Fpga_CPU_result_a3[0] :
+                        FpgaPins_Fpga_CPU_is_bge_a3  ? !FpgaPins_Fpga_CPU_result_a3[0] :
                                    1'b0;
-                     assign FpgaPins_Fpga_CPU_valid_tgt_pc_a1 = FpgaPins_Fpga_CPU_valid_taken_br_a1 | FpgaPins_Fpga_CPU_valid_jump_a1;
+                     assign FpgaPins_Fpga_CPU_valid_tgt_pc_a3 = FpgaPins_Fpga_CPU_valid_taken_br_a3 | FpgaPins_Fpga_CPU_valid_jump_a3;
             
                      // Target PC Adder
-                     assign FpgaPins_Fpga_CPU_tgt_pc_a1[31:0] = FpgaPins_Fpga_CPU_tgt_pc_op1_a1 + FpgaPins_Fpga_CPU_tgt_pc_op2_a1;
+                     assign FpgaPins_Fpga_CPU_tgt_pc_a3[31:0] = FpgaPins_Fpga_CPU_tgt_pc_op1_a3 + FpgaPins_Fpga_CPU_tgt_pc_op2_a3;
             
                      // ALU
-                     assign FpgaPins_Fpga_CPU_sra_result_a1[63:0] = { {32{FpgaPins_Fpga_CPU_alu_op1_a1[31]}}, FpgaPins_Fpga_CPU_alu_op1_a1} >> FpgaPins_Fpga_CPU_alu_op2_a1[4:0];
-                     assign FpgaPins_Fpga_CPU_sltu_result_a1[31:0] = FpgaPins_Fpga_CPU_alu_op1_a1 < FpgaPins_Fpga_CPU_alu_op2_a1 ? 32'h0000_0001 : 32'h0000_0000;
-                     assign FpgaPins_Fpga_CPU_result_a1[31:0] =
-                        FpgaPins_Fpga_CPU_is_add_op_a1  ? FpgaPins_Fpga_CPU_alu_op1_a1 + FpgaPins_Fpga_CPU_alu_op2_a1 :
-                        FpgaPins_Fpga_CPU_is_and_op_a1  ? FpgaPins_Fpga_CPU_alu_op1_a1 & FpgaPins_Fpga_CPU_alu_op2_a1 :
-                        FpgaPins_Fpga_CPU_is_lui_a1     ? {FpgaPins_Fpga_CPU_alu_op2_a1[31:12], 12'h000} :
-                        FpgaPins_Fpga_CPU_is_or_op_a1   ? FpgaPins_Fpga_CPU_alu_op1_a1 | FpgaPins_Fpga_CPU_alu_op2_a1 :
-                        FpgaPins_Fpga_CPU_is_sll_op_a1  ? FpgaPins_Fpga_CPU_alu_op1_a1 << FpgaPins_Fpga_CPU_alu_op2_a1[4:0] :
-                        FpgaPins_Fpga_CPU_is_slt_op_a1  ? ((FpgaPins_Fpga_CPU_alu_op1_a1[31] == FpgaPins_Fpga_CPU_alu_op2_a1[31]) ? FpgaPins_Fpga_CPU_sltu_result_a1 : (FpgaPins_Fpga_CPU_alu_op1_a1[31] == 1'b1 ? 32'h0000_0001 : 32'h0000_0000)) :
-                        FpgaPins_Fpga_CPU_is_sltu_op_a1 ? FpgaPins_Fpga_CPU_sltu_result_a1 :
-                        FpgaPins_Fpga_CPU_is_sra_op_a1  ? FpgaPins_Fpga_CPU_sra_result_a1[31:0] :
-                        FpgaPins_Fpga_CPU_is_srl_op_a1  ? FpgaPins_Fpga_CPU_alu_op1_a1 >> FpgaPins_Fpga_CPU_alu_op2_a1[4:0] :
-                        FpgaPins_Fpga_CPU_is_sub_a1     ? FpgaPins_Fpga_CPU_alu_op1_a1 - FpgaPins_Fpga_CPU_alu_op2_a1 :
-                        FpgaPins_Fpga_CPU_is_xor_op_a1  ? FpgaPins_Fpga_CPU_alu_op1_a1 ^ FpgaPins_Fpga_CPU_alu_op2_a1 :
+                     assign FpgaPins_Fpga_CPU_sra_result_a3[63:0] = { {32{FpgaPins_Fpga_CPU_alu_op1_a3[31]}}, FpgaPins_Fpga_CPU_alu_op1_a3} >> FpgaPins_Fpga_CPU_alu_op2_a3[4:0];
+                     assign FpgaPins_Fpga_CPU_sltu_result_a3[31:0] = FpgaPins_Fpga_CPU_alu_op1_a3 < FpgaPins_Fpga_CPU_alu_op2_a3 ? 32'h0000_0001 : 32'h0000_0000;
+                     assign FpgaPins_Fpga_CPU_result_a3[31:0] =
+                        FpgaPins_Fpga_CPU_is_add_op_a3  ? FpgaPins_Fpga_CPU_alu_op1_a3 + FpgaPins_Fpga_CPU_alu_op2_a3 :
+                        FpgaPins_Fpga_CPU_is_and_op_a3  ? FpgaPins_Fpga_CPU_alu_op1_a3 & FpgaPins_Fpga_CPU_alu_op2_a3 :
+                        FpgaPins_Fpga_CPU_is_lui_a3     ? {FpgaPins_Fpga_CPU_alu_op2_a3[31:12], 12'h000} :
+                        FpgaPins_Fpga_CPU_is_or_op_a3   ? FpgaPins_Fpga_CPU_alu_op1_a3 | FpgaPins_Fpga_CPU_alu_op2_a3 :
+                        FpgaPins_Fpga_CPU_is_sll_op_a3  ? FpgaPins_Fpga_CPU_alu_op1_a3 << FpgaPins_Fpga_CPU_alu_op2_a3[4:0] :
+                        FpgaPins_Fpga_CPU_is_slt_op_a3  ? ((FpgaPins_Fpga_CPU_alu_op1_a3[31] == FpgaPins_Fpga_CPU_alu_op2_a3[31]) ? FpgaPins_Fpga_CPU_sltu_result_a3 : (FpgaPins_Fpga_CPU_alu_op1_a3[31] == 1'b1 ? 32'h0000_0001 : 32'h0000_0000)) :
+                        FpgaPins_Fpga_CPU_is_sltu_op_a3 ? FpgaPins_Fpga_CPU_sltu_result_a3 :
+                        FpgaPins_Fpga_CPU_is_sra_op_a3  ? FpgaPins_Fpga_CPU_sra_result_a3[31:0] :
+                        FpgaPins_Fpga_CPU_is_srl_op_a3  ? FpgaPins_Fpga_CPU_alu_op1_a3 >> FpgaPins_Fpga_CPU_alu_op2_a3[4:0] :
+                        FpgaPins_Fpga_CPU_is_sub_a3     ? FpgaPins_Fpga_CPU_alu_op1_a3 - FpgaPins_Fpga_CPU_alu_op2_a3 :
+                        FpgaPins_Fpga_CPU_is_xor_op_a3  ? FpgaPins_Fpga_CPU_alu_op1_a3 ^ FpgaPins_Fpga_CPU_alu_op2_a3 :
                                       32'hxxxx_xxxx;
             
                      // Register Write
-                     assign FpgaPins_Fpga_CPU_rf_wr_en_a1 = FpgaPins_Fpga_CPU_valid_a1 && FpgaPins_Fpga_CPU_rd_valid_a1 && (FpgaPins_Fpga_CPU_rd_a1 != 5'h00);
-                     assign FpgaPins_Fpga_CPU_rf_wr_index_a1[4:0] = FpgaPins_Fpga_CPU_rd_a1;
-                     assign FpgaPins_Fpga_CPU_rf_wr_data_a1[31:0] = FpgaPins_Fpga_CPU_valid_load_a1 ? FpgaPins_Fpga_CPU_ld_data_a1 : FpgaPins_Fpga_CPU_result_a1;
+                     assign FpgaPins_Fpga_CPU_rf_wr_en_a3 = (FpgaPins_Fpga_CPU_valid_a3 && FpgaPins_Fpga_CPU_rd_valid_a3 && (FpgaPins_Fpga_CPU_rd_a3 != 5'h00) && !FpgaPins_Fpga_CPU_valid_load_a3) || FpgaPins_Fpga_CPU_valid_load_a5;
+                     assign FpgaPins_Fpga_CPU_rf_wr_index_a3[4:0] = FpgaPins_Fpga_CPU_valid_a3 ? FpgaPins_Fpga_CPU_rd_a3 : FpgaPins_Fpga_CPU_rd_a5;
+                     assign FpgaPins_Fpga_CPU_rf_wr_data_a3[31:0] = FpgaPins_Fpga_CPU_valid_a3 ? FpgaPins_Fpga_CPU_result_a3 : FpgaPins_Fpga_CPU_ld_data_a5;
             
-                     // Data Memory R/W
-                     assign dmem_rd_en = FpgaPins_Fpga_CPU_valid_load_a1;
-                     assign dmem_wr_en = FpgaPins_Fpga_CPU_valid_store_a1;
-                     assign dmem_addr = FpgaPins_Fpga_CPU_result_a1[DMEM_BYTE_ADDR_WIDTH-1:2];
-                     assign dmem_wr_byte_en =
-                        FpgaPins_Fpga_CPU_is_sw_a1                             ? 4'b1111 :
-                        FpgaPins_Fpga_CPU_is_sh_a1 && dmem_addr[1]            ? 4'b1100 :
-                        FpgaPins_Fpga_CPU_is_sh_a1 && !dmem_addr[1]           ? 4'b0011 :
-                        FpgaPins_Fpga_CPU_is_sb_a1 && dmem_addr[1:0] == 2'b11 ? 4'b1000 :
-                        FpgaPins_Fpga_CPU_is_sb_a1 && dmem_addr[1:0] == 2'b10 ? 4'b0100 :
-                        FpgaPins_Fpga_CPU_is_sb_a1 && dmem_addr[1:0] == 2'b01 ? 4'b0010 :
-                        FpgaPins_Fpga_CPU_is_sb_a1 && dmem_addr[1:0] == 2'b00 ? 4'b0001 :
-                                                             4'b0000;
-                     assign dmem_wr_data =
-                        FpgaPins_Fpga_CPU_is_sh_a1 && dmem_addr[1]            ? FpgaPins_Fpga_CPU_src2_value_a1 << 16 :
-                        FpgaPins_Fpga_CPU_is_sb_a1 && dmem_addr[1:0] == 2'b11 ? FpgaPins_Fpga_CPU_src2_value_a1 << 24 :
-                        FpgaPins_Fpga_CPU_is_sb_a1 && dmem_addr[1:0] == 2'b10 ? FpgaPins_Fpga_CPU_src2_value_a1 << 16 :
-                        FpgaPins_Fpga_CPU_is_sb_a1 && dmem_addr[1:0] == 2'b01 ? FpgaPins_Fpga_CPU_src2_value_a1 << 8 :
-                                                             FpgaPins_Fpga_CPU_src2_value_a1;
-                     assign FpgaPins_Fpga_CPU_ld_data_a1[31:0] =
-                        FpgaPins_Fpga_CPU_is_lh_a1  && dmem_addr[1]            ? {{16{dmem_rd_data[31]}}, dmem_rd_data[31:16]} :
-                        FpgaPins_Fpga_CPU_is_lh_a1  && !dmem_addr[1]           ? {{16{dmem_rd_data[15]}}, dmem_rd_data[15:0]} :
-                        FpgaPins_Fpga_CPU_is_lhu_a1 && dmem_addr[1]            ? {16'h0000, dmem_rd_data[31:16]} :
-                        FpgaPins_Fpga_CPU_is_lhu_a1 && !dmem_addr[1]           ? {16'h0000, dmem_rd_data[15:0]} :
-                        FpgaPins_Fpga_CPU_is_lb_a1  && dmem_addr[1:0] == 2'b11 ? {{24{dmem_rd_data[31]}}, dmem_rd_data[31:24]} :
-                        FpgaPins_Fpga_CPU_is_lb_a1  && dmem_addr[1:0] == 2'b10 ? {{24{dmem_rd_data[23]}}, dmem_rd_data[23:16]} :
-                        FpgaPins_Fpga_CPU_is_lb_a1  && dmem_addr[1:0] == 2'b01 ? {{24{dmem_rd_data[15]}}, dmem_rd_data[15:8]} :
-                        FpgaPins_Fpga_CPU_is_lb_a1  && dmem_addr[1:0] == 2'b00 ? {{24{dmem_rd_data[7]}}, dmem_rd_data[7:0]} :
-                        FpgaPins_Fpga_CPU_is_lbu_a1 && dmem_addr[1:0] == 2'b11 ? {24'h00_0000, dmem_rd_data[31:24]} :
-                        FpgaPins_Fpga_CPU_is_lbu_a1 && dmem_addr[1:0] == 2'b10 ? {24'h00_0000, dmem_rd_data[23:16]} :
-                        FpgaPins_Fpga_CPU_is_lbu_a1 && dmem_addr[1:0] == 2'b01 ? {24'h00_0000, dmem_rd_data[15:8]} :
-                        FpgaPins_Fpga_CPU_is_lbu_a1 && dmem_addr[1:0] == 2'b00 ? {24'h00_0000, dmem_rd_data[7:0]} :
-                                                              dmem_rd_data;
+                  //_@4 // Data Memory R/W
+                     assign dmem_rd_en = FpgaPins_Fpga_CPU_valid_load_a4;
+                     assign dmem_wr_en = FpgaPins_Fpga_CPU_valid_store_a4;
+                     assign dmem_addr = FpgaPins_Fpga_CPU_result_a4[DMEM_BYTE_ADDR_WIDTH-1:2];
+                     assign dmem_wr_byte_en = 4'b1111; // Just implement LW/SW for now
+                     assign dmem_wr_data = FpgaPins_Fpga_CPU_src2_value_a4;
+                     assign FpgaPins_Fpga_CPU_ld_data_a4[31:0] = dmem_rd_data;
             
                   // Note that pipesignals assigned here can be found under /fpga_pins/fpga.
             
@@ -984,25 +1196,25 @@ logic [31:0] FpgaPins_Fpga_CPU_Xreg_value_a1 [15:0],
                //  o CPU visualization
                //_|cpu
                   // m4+imem(@1)    // Args: (read stage)
-                  //_\source /raw.githubusercontent.com/efabless/chipcraftmestcourse/main/tlvlib/riscvshelllib.tlv 33   // Instantiated from top.tlv, 308 as: m4+rf(@1, @1)
+                  //_\source /raw.githubusercontent.com/efabless/chipcraftmestcourse/main/tlvlib/riscvshelllib.tlv 33   // Instantiated from top.tlv, 282 as: m4+rf(@2, @3)
                      // Reg File
-                     //_@1
+                     //_@3
                         for (xreg = 0; xreg <= 15; xreg++) begin : L1_FpgaPins_Fpga_CPU_Xreg //_/xreg
 
                            // For $wr.
-                           logic L1_wr_a1;
+                           logic L1_wr_a3;
 
-                           assign L1_wr_a1 = FpgaPins_Fpga_CPU_rf_wr_en_a1 && (FpgaPins_Fpga_CPU_rf_wr_index_a1 != 5'b0) && (FpgaPins_Fpga_CPU_rf_wr_index_a1 == xreg);
-                           assign FpgaPins_Fpga_CPU_Xreg_value_a1[xreg][31:0] = FpgaPins_Fpga_CPU_reset_a1 ?   xreg           :
-                                          L1_wr_a1        ?   FpgaPins_Fpga_CPU_rf_wr_data_a1 :
-                                                         FpgaPins_Fpga_CPU_Xreg_value_a2[xreg][31:0];
+                           assign L1_wr_a3 = FpgaPins_Fpga_CPU_rf_wr_en_a3 && (FpgaPins_Fpga_CPU_rf_wr_index_a3 != 5'b0) && (FpgaPins_Fpga_CPU_rf_wr_index_a3 == xreg);
+                           assign FpgaPins_Fpga_CPU_Xreg_value_a3[xreg][31:0] = FpgaPins_Fpga_CPU_reset_a3 ?   xreg           :
+                                          L1_wr_a3        ?   FpgaPins_Fpga_CPU_rf_wr_data_a3 :
+                                                         FpgaPins_Fpga_CPU_Xreg_value_a4[xreg][31:0];
                         end
-                     //_@1
+                     //_@2
                         //_?$rf_rd_en1
-                           assign FpgaPins_Fpga_CPU_rf_rd_data1_a1[31:0] = FpgaPins_Fpga_CPU_Xreg_value_a2[FpgaPins_Fpga_CPU_rf_rd_index1_a1[3:0]];
+                           assign FpgaPins_Fpga_CPU_rf_rd_data1_a2[31:0] = FpgaPins_Fpga_CPU_Xreg_value_a4[FpgaPins_Fpga_CPU_rf_rd_index1_a2[3:0]];
                         //_?$rf_rd_en2
-                           assign FpgaPins_Fpga_CPU_rf_rd_data2_a1[31:0] = FpgaPins_Fpga_CPU_Xreg_value_a2[FpgaPins_Fpga_CPU_rf_rd_index2_a1[3:0]];
-                        `BOGUS_USE(FpgaPins_Fpga_CPU_rf_rd_data1_a1 FpgaPins_Fpga_CPU_rf_rd_data2_a1)
+                           assign FpgaPins_Fpga_CPU_rf_rd_data2_a2[31:0] = FpgaPins_Fpga_CPU_Xreg_value_a4[FpgaPins_Fpga_CPU_rf_rd_index2_a2[3:0]];
+                        `BOGUS_USE(FpgaPins_Fpga_CPU_rf_rd_data1_a2 FpgaPins_Fpga_CPU_rf_rd_data2_a2)
                   //_\end_source  // Args: (read stage, write stage) - if equal, no register bypass is required
                   // m4+dmem(@4)    // Args: (read/write stage)
             
@@ -1043,7 +1255,7 @@ logic [31:0] FpgaPins_Fpga_CPU_Xreg_value_a1 [15:0],
       
    //_\end_source
    // Label the switch inputs [0..7] (1..8 on the physical switch panel) (top-to-bottom).
-   //_\source /raw.githubusercontent.com/osfpga/VirtualFPGALab/35e36bd144fddd75495d4cbc01c4fc50ac5bde6f/tlvlib/tinytapeoutlib.tlv 82   // Instantiated from top.tlv, 415 as: m5+tt_input_labels_viz(⌈"UNUSED", "UNUSED", "UNUSED", "UNUSED", "UNUSED", "UNUSED", "UNUSED", "UNUSED"⌉)
+   //_\source /raw.githubusercontent.com/osfpga/VirtualFPGALab/35e36bd144fddd75495d4cbc01c4fc50ac5bde6f/tlvlib/tinytapeoutlib.tlv 82   // Instantiated from top.tlv, 389 as: m5+tt_input_labels_viz(⌈"UNUSED", "UNUSED", "UNUSED", "UNUSED", "UNUSED", "UNUSED", "UNUSED", "UNUSED"⌉)
       for (input_label = 0; input_label <= 7; input_label++) begin : L1_InputLabel //_/input_label
          
       end
