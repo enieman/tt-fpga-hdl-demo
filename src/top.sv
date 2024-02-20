@@ -1797,50 +1797,6 @@ endmodule
          .cpu_mem_rd_data(dmem_rd_data));
    endmodule
 
-   // UART R/W Bufferspace Demo
-   module uart_mem_rw_demo
-      #(
-         parameter int unsigned COUNTER_WIDTH = 24,
-         parameter int unsigned MEM_BYTE_ADDR_WIDTH = 6  // 64 bytes of storage, or 16 four-byte words
-      )
-      (
-         input logic clk,
-         input logic rst,
-         input logic rx_in,
-         output logic tx_out
-      );
-
-      // Dummy CPU, Copies Data From I-Memory to D-Memory
-      logic cpu_rst;
-      logic [MEM_BYTE_ADDR_WIDTH-3:0] cpu_mem_addr;
-      logic [31:0] cpu_mem_data;
-      always_ff @(posedge clk) begin
-         if (cpu_rst) cpu_mem_addr <= '0;
-         else cpu_mem_addr <= cpu_mem_addr + 1;
-      end
-
-      uart_top #(
-         .COUNTER_WIDTH(COUNTER_WIDTH),
-         .IMEM_BYTE_ADDR_WIDTH(MEM_BYTE_ADDR_WIDTH),
-         .DMEM_BYTE_ADDR_WIDTH(MEM_BYTE_ADDR_WIDTH))
-      uart_top0 (
-         .clk(clk),
-         .rst(rst),
-         .rx_in(rx_in),
-         .tx_out(tx_out),
-         .cpu_rst(cpu_rst),
-         .imem_rd_en(1'b1),
-         .imem_rd_addr(cpu_mem_addr),
-         .imem_rd_data(cpu_mem_data),
-         .dmem_rd_en(1'b0),
-         .dmem_wr_en(~cpu_rst),
-         .dmem_addr(cpu_mem_addr),
-         .dmem_wr_byte_en(4'hF),
-         .dmem_wr_data(cpu_mem_data),
-         .dmem_rd_data());
-
-   endmodule
-
 
 // Undefine macros defined by SandPiper.
 `undef BOGUS_USE
