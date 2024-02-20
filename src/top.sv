@@ -5,7 +5,7 @@
    // Include Tiny Tapeout Lab.
    // Included URL: "https://raw.githubusercontent.com/os-fpga/Virtual-FPGA-Lab/35e36bd144fddd75495d4cbc01c4fc50ac5bde6f/tlv_lib/tiny_tapeout_lib.tlv"// Included URL: "https://raw.githubusercontent.com/os-fpga/Virtual-FPGA-Lab/a069f1e4e19adc829b53237b3e0b5d6763dc3194/tlv_lib/fpga_includes.tlv"
    // Included URL: "https://raw.githubusercontent.com/efabless/chipcraft---mest-course/main/tlv_lib/risc-v_shell_lib.tlv"// Included URL: "https://raw.githubusercontent.com/stevehoover/warp-v_includes/450357b4993fa480e7fca57dc346e39cba21b6bc/risc-v_defs.tlv"
-//_\source top.tlv 285
+//_\source top.tlv 284
 
 //_\SV
 
@@ -56,18 +56,22 @@ module tt_um_template (
 );
 
    // Parameters for Memory Sizing and UART Baud
-   localparam int unsigned COUNTER_WIDTH = 24;
-   localparam int unsigned IMEM_BYTE_ADDR_WIDTH = 6; // 64 bytes / 16 words
-   localparam int unsigned DMEM_BYTE_ADDR_WIDTH = 4; // 16 bytes / 4 words
-
-   // User Interface
-   wire rst = ! rst_n | ui_in[7];
-   wire rx_in = ui_in[2]; // TO-DO: Determine which pin I need to use, look at Pmod pinout
-   wire tx_out;
-   assign uo_out[2] = tx_out; // TO-DO: Determine which pin I need to use, look at Pmod pinout
+   localparam int unsigned COUNTER_WIDTH = 24;       // Width of the clock counters in the UART RX and TX modules
+   localparam int unsigned IMEM_BYTE_ADDR_WIDTH = 6; // 64 bytes / 16 words of I-Memory
+   localparam int unsigned DMEM_BYTE_ADDR_WIDTH = 4; // 16 bytes /  4 words of D-Memory
 
    // CPU Reset
    wire reset;
+
+   // User Interface
+   wire rst = ! rst_n | ui_in[7]; // Provide a dedicated button input for RESET
+   wire rx_in = ui_in[2];         // TO-DO: Determine which pin I need to use, look at Pmod pinout
+   wire tx_out;
+   assign uo_out[2] = tx_out;     // TO-DO: Determine which pin I need to use, look at Pmod pinout
+   assign uo_out[7] = rst;        // Feedback of RST button, intended to use with LED
+   assign uo_out[6] = reset;      // Feedback of CPU reset, indicates if UART controller is in write mode (reset = 1) or read mode (reset = 0)
+   assign uo_out[5] = ~rx_in;     // Feedback of RX line, intended to use with LED
+   assign uo_out[4] = ~tx_out;    // Feedback of TX line, intended to use with LED
 
    // I-Memory Interface
    logic imem_rd_en;
@@ -962,7 +966,7 @@ logic [31:0] FpgaPins_Fpga_CPU_Xreg_value_a3 [15:0],
 //_\TLV
    /* verilator lint_off UNOPTFLAT */
    // Connect Tiny Tapeout I/Os to Virtual FPGA Lab.
-   //_\source /raw.githubusercontent.com/osfpga/VirtualFPGALab/35e36bd144fddd75495d4cbc01c4fc50ac5bde6f/tlvlib/tinytapeoutlib.tlv 76   // Instantiated from top.tlv, 384 as: m5+tt_connections()
+   //_\source /raw.githubusercontent.com/osfpga/VirtualFPGALab/35e36bd144fddd75495d4cbc01c4fc50ac5bde6f/tlvlib/tinytapeoutlib.tlv 76   // Instantiated from top.tlv, 387 as: m5+tt_connections()
       assign L0_slideswitch_a0[7:0] = ui_in;
       assign L0_sseg_segment_n_a0[6:0] = ~ uo_out[6:0];
       assign L0_sseg_decimal_point_n_a0 = ~ uo_out[7];
@@ -970,7 +974,7 @@ logic [31:0] FpgaPins_Fpga_CPU_Xreg_value_a3 [15:0],
    //_\end_source
 
    // Instantiate the Virtual FPGA Lab.
-   //_\source /raw.githubusercontent.com/osfpga/VirtualFPGALab/a069f1e4e19adc829b53237b3e0b5d6763dc3194/tlvlib/fpgaincludes.tlv 307   // Instantiated from top.tlv, 387 as: m5+board(/top, /fpga, 7, $, , cpu)
+   //_\source /raw.githubusercontent.com/osfpga/VirtualFPGALab/a069f1e4e19adc829b53237b3e0b5d6763dc3194/tlvlib/fpgaincludes.tlv 307   // Instantiated from top.tlv, 390 as: m5+board(/top, /fpga, 7, $, , cpu)
       
       //_\source /raw.githubusercontent.com/osfpga/VirtualFPGALab/a069f1e4e19adc829b53237b3e0b5d6763dc3194/tlvlib/fpgaincludes.tlv 355   // Instantiated from /raw.githubusercontent.com/osfpga/VirtualFPGALab/a069f1e4e19adc829b53237b3e0b5d6763dc3194/tlvlib/fpgaincludes.tlv, 309 as: m4+thanks(m5__l(309)m5_eval(m5_get(BOARD_THANKS_ARGS)))
          //_/thanks
@@ -1022,7 +1026,6 @@ logic [31:0] FpgaPins_Fpga_CPU_Xreg_value_a3 [15:0],
                      assign FpgaPins_Fpga_CPU_inc_pc_a1[31:0] = FpgaPins_Fpga_CPU_pc_a1 + 32'h4;
             
                      // Instruction Fields
-                     // $instr[31:0] = *imem_rd_data;
                      assign FpgaPins_Fpga_CPU_opcode_a1[6:0] = FpgaPins_Fpga_CPU_instr_a1[6:0];
                      assign FpgaPins_Fpga_CPU_funct3_a1[2:0] = FpgaPins_Fpga_CPU_instr_a1[14:12];
                      assign FpgaPins_Fpga_CPU_funct7_a1[6:0] = FpgaPins_Fpga_CPU_instr_a1[31:25];
@@ -1196,7 +1199,7 @@ logic [31:0] FpgaPins_Fpga_CPU_Xreg_value_a3 [15:0],
                //  o CPU visualization
                //_|cpu
                   // m4+imem(@1)    // Args: (read stage)
-                  //_\source /raw.githubusercontent.com/efabless/chipcraftmestcourse/main/tlvlib/riscvshelllib.tlv 33   // Instantiated from top.tlv, 282 as: m4+rf(@2, @3)
+                  //_\source /raw.githubusercontent.com/efabless/chipcraftmestcourse/main/tlvlib/riscvshelllib.tlv 33   // Instantiated from top.tlv, 281 as: m4+rf(@2, @3)
                      // Reg File
                      //_@3
                         for (xreg = 0; xreg <= 15; xreg++) begin : L1_FpgaPins_Fpga_CPU_Xreg //_/xreg
@@ -1255,7 +1258,7 @@ logic [31:0] FpgaPins_Fpga_CPU_Xreg_value_a3 [15:0],
       
    //_\end_source
    // Label the switch inputs [0..7] (1..8 on the physical switch panel) (top-to-bottom).
-   //_\source /raw.githubusercontent.com/osfpga/VirtualFPGALab/35e36bd144fddd75495d4cbc01c4fc50ac5bde6f/tlvlib/tinytapeoutlib.tlv 82   // Instantiated from top.tlv, 389 as: m5+tt_input_labels_viz(⌈"UNUSED", "UNUSED", "UNUSED", "UNUSED", "UNUSED", "UNUSED", "UNUSED", "UNUSED"⌉)
+   //_\source /raw.githubusercontent.com/osfpga/VirtualFPGALab/35e36bd144fddd75495d4cbc01c4fc50ac5bde6f/tlvlib/tinytapeoutlib.tlv 82   // Instantiated from top.tlv, 392 as: m5+tt_input_labels_viz(⌈"UNUSED", "UNUSED", "UNUSED", "UNUSED", "UNUSED", "UNUSED", "UNUSED", "UNUSED"⌉)
       for (input_label = 0; input_label <= 7; input_label++) begin : L1_InputLabel //_/input_label
          
       end
