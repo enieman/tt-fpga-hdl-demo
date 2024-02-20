@@ -57,7 +57,7 @@ module tt_um_template (
 
    // Parameters for Memory Sizing and UART Baud
    localparam int unsigned COUNTER_WIDTH = 24;
-   localparam int unsigned IMEM_BYTE_ADDR_WIDTH = 6; // 64 bytes / 16 words
+   localparam int unsigned IMEM_BYTE_ADDR_WIDTH = 5; // 32 bytes / 8 words
    localparam int unsigned DMEM_BYTE_ADDR_WIDTH = 4; // 16 bytes / 4 words
 
    // User Interface
